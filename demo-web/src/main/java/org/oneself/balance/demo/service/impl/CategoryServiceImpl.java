@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang.StringUtils;
 import org.oneself.balance.demo.entity.CategoryEntity;
 import org.oneself.balance.demo.mapper.CategoryMapper;
 import org.oneself.balance.demo.service.CategoryService;
 import org.oneself.balance.demo.vo.CategoryRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  *  @Author: Ron Yu
@@ -39,7 +42,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, CategoryEnt
     @Override
     public Page<CategoryEntity> queryCategory(CategoryRequestVO requestVO) {
         LambdaQueryWrapper<CategoryEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(CategoryEntity::getCategoryName, requestVO.getCategoryName())
+        queryWrapper.like(StringUtils.isNotEmpty(requestVO.getCategoryName()),
+                        CategoryEntity::getCategoryName, requestVO.getCategoryName())
                 .eq(CategoryEntity::getDelFlag, 0)
                 .orderByDesc(CategoryEntity::getCreateTime);
 
