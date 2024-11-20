@@ -1,6 +1,9 @@
 package org.oneself.balance.demo.service.impl;
 
+import org.oneself.balance.demo.entity.DailyExpenseRecordEntity;
+import org.oneself.balance.demo.mapper.DailyExpenseRecordMapper;
 import org.oneself.balance.demo.service.BalanceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,4 +12,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BalanceServiceImpl implements BalanceService {
+
+    @Autowired
+    private DailyExpenseRecordMapper dailyExpenseRecordMapper;
+
+    @Override
+    public void addBalance(DailyExpenseRecordEntity entity) {
+        dailyExpenseRecordMapper.insert(entity);
+    }
 }

@@ -52,7 +52,7 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenMapper, Sys
             this.updateById(tokenEntity);
         }
 
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("expire", EXPIRE);
         R ok = R.ok(map);

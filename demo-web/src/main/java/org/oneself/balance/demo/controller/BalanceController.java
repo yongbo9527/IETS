@@ -1,14 +1,13 @@
 package org.oneself.balance.demo.controller;
 
+import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.oneself.balance.demo.entity.DailyExpenseRecordEntity;
 import org.oneself.balance.demo.service.BalanceService;
-import org.oneself.balance.demo.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: Ron Yu
@@ -24,8 +23,9 @@ public class BalanceController {
 
     @ApiOperation(value = "新增收支记录")
     @PutMapping("/addBalance")
-    public void addBalance() {
-
+    public R addBalance(@RequestBody DailyExpenseRecordEntity entity) {
+        balanceService.addBalance(entity);
+        return R.ok("新增成功");
     }
 
     @ApiOperation(value = "修改收支记录")
@@ -43,8 +43,8 @@ public class BalanceController {
     @ApiOperation(value = "查询收支记录")
     @PostMapping("/queryBalance")
     public R queryBalance() {
-
-        return R.ok();
+//        Page page = balanceService.queryBalance();
+        return R.ok("");
     }
 
 

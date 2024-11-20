@@ -5,38 +5,44 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  *  @Author: Ron Yu
- *  @Create: 2024-10-29 11:19
+ *  @Create: 2024-11-19 15:41
  *
  */
 @Data
-@TableName("base_tally_category")
-public class CategoryEntity implements Serializable {
-
+@TableName("daily_expense_record")
+public class DailyExpenseRecordEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 类目id，主键自增
+     * 主键id
      */
     @TableId
     private Integer id;
 
     /**
-     * 类目名称
+     * 类目ID，关联base_tally_category表
      */
-    private String categoryName;
+    private Integer categoryId;
 
     /**
-     * 类目图标
+     * 消费金额
      */
-    private String categoryIcon;
+    private BigDecimal expenseAmount;
 
     /**
-     * 父级类目id
+     * 消费日期
      */
-    private Integer parentId;
+    private Date expenseDate;
+
+    /**
+     * 消费类型，1-支出，2-收入
+     */
+    private Integer expenseType;
 
     /**
      * 备注
@@ -44,28 +50,29 @@ public class CategoryEntity implements Serializable {
     private String remark;
 
     /**
-     * 创建人
+     * 创建者
      */
     private String createName;
 
     /**
      * 创建时间
      */
-    private String createTime;
+    private Date createTime;
 
     /**
-     * 修改人
+     * 更新者
      */
     private String updateName;
 
     /**
-     * 修改时间
+     * 更新时间
      */
-    private String updateTime;
+    private Date updateTime;
 
     /**
-     * 删除标识
+     * 删除标记，0-未删除，1-已删除
      */
     private Integer delFlag;
+
 
 }

@@ -13,6 +13,11 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
 
+# jackson时间格式化
+jackson:
+  time-zone: GMT+8
+  date-format: yyyy-MM-dd HH:mm:ss
+
 server:
   port: 8081
   servlet:

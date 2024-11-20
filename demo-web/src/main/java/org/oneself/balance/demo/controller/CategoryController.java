@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  *  @Author: Ron Yu
  *  @Create: 2024-10-29 11:01
@@ -30,6 +32,13 @@ public class CategoryController {
     @PostMapping("/queryCategory")
     public R<Page<CategoryEntity>> queryCategory(@RequestBody CategoryRequestVO requestVO) {
         Page<CategoryEntity> entityPage = categoryService.queryCategory(requestVO);
+        return R.ok(entityPage);
+    }
+
+    @ApiOperation(value = "查询所有类目")
+    @PostMapping("/queryAllCategory")
+    public R<List<CategoryEntity>> queryAllCategory(@RequestBody CategoryRequestVO requestVO) {
+        List<CategoryEntity> entityPage = categoryService.queryAllCategory(requestVO);
         return R.ok(entityPage);
     }
 

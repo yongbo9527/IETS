@@ -12,6 +12,7 @@ import org.oneself.balance.demo.vo.CategoryRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,5 +59,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, CategoryEnt
     public void updateCategory(CategoryEntity entity) {
         LambdaUpdateWrapper<CategoryEntity> updatedWrapper =  new LambdaUpdateWrapper<CategoryEntity>().eq(CategoryEntity::getId, entity.getId());
         this.update(entity, updatedWrapper);
+    }
+
+    @Override
+    public List<CategoryEntity> queryAllCategory(CategoryRequestVO requestVO) {
+        LambdaQueryWrapper<CategoryEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CategoryEntity::getDelFlag, 0);
+        return this.list(queryWrapper);
     }
 }

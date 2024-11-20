@@ -33,4 +33,11 @@ public interface CategoryService extends IService<CategoryEntity> {
      * 修改类目
      */
     void updateCategory(CategoryEntity entity);
+
+    /**
+     * 查询所有类目
+     * @param requestVO
+     * @return
+     */
+    List<CategoryEntity> queryAllCategory(CategoryRequestVO requestVO);
 }
