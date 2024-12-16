@@ -8,7 +8,7 @@ import org.oneself.balance.demo.entity.SysUserEntity;
 import org.oneself.balance.demo.mapper.SysUserMapper;
 import org.oneself.balance.demo.service.SysUserService;
 import org.oneself.balance.demo.service.SysUserTokenService;
-import org.oneself.balance.demo.vo.SysLoginRequestVO;
+import org.oneself.balance.demo.vo.request.SysLoginRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

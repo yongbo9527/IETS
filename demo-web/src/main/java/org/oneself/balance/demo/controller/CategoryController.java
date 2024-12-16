@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.oneself.balance.demo.entity.CategoryEntity;
 import org.oneself.balance.demo.service.CategoryService;
-import org.oneself.balance.demo.vo.CategoryRequestVO;
+import org.oneself.balance.demo.vo.request.CategoryRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

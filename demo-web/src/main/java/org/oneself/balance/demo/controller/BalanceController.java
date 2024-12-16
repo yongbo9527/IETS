@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.oneself.balance.demo.entity.DailyExpenseRecordEntity;
 import org.oneself.balance.demo.service.BalanceService;
+import org.oneself.balance.demo.vo.balance.QueryBalanceVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @Create: 2024-08-30 10:35
  */
 @RestController
-@RequestMapping("/balance")
+@RequestMapping("/tally")
 @Api(tags = "收支记录")
 public class BalanceController {
 
@@ -42,9 +43,22 @@ public class BalanceController {
 
     @ApiOperation(value = "查询收支记录")
     @PostMapping("/queryBalance")
-    public R queryBalance() {
-//        Page page = balanceService.queryBalance();
-        return R.ok("");
+    public R queryBalance(@RequestBody QueryBalanceVO vo) {
+        R result = balanceService.queryBalance(vo);
+        return result;
+    }
+
+    @ApiOperation(value = "查询收支记录")
+    @PostMapping("/queryBalanceShortHead")
+    public R queryBalanceShortHead(@RequestBody QueryBalanceVO vo) {
+        R result = balanceService.queryBalanceShortHead(vo);
+        return result;
+    }
+    @ApiOperation(value = "查询类目结构")
+    @PostMapping("/queryTreeCategoryList")
+    public R queryTreeCategoryList() {
+        R result = balanceService.queryTreeCategoryList();
+        return result;
     }
 
 

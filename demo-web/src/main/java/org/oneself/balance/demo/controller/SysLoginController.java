@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.oneself.balance.demo.service.SysUserService;
 import org.oneself.balance.demo.service.SysUserTokenService;
-import org.oneself.balance.demo.vo.SysLoginRequestVO;
+import org.oneself.balance.demo.vo.request.SysLoginRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

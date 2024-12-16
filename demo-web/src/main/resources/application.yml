@@ -10,8 +10,14 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto # 主键策略，自增
+      # 默认数据库表下划线命名
+      table-underline: true
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
 
 # jackson时间格式化
 jackson:

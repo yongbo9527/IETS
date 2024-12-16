@@ -8,11 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.oneself.balance.demo.entity.CategoryEntity;
 import org.oneself.balance.demo.mapper.CategoryMapper;
 import org.oneself.balance.demo.service.CategoryService;
-import org.oneself.balance.demo.vo.CategoryRequestVO;
+import org.oneself.balance.demo.vo.request.CategoryRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

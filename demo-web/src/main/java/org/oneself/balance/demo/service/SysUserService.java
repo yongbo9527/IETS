@@ -3,7 +3,7 @@ package org.oneself.balance.demo.service;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.oneself.balance.demo.entity.SysUserEntity;
-import org.oneself.balance.demo.vo.SysLoginRequestVO;
+import org.oneself.balance.demo.vo.request.SysLoginRequestVO;
 
 /**
  *  @Author: Ron Yu

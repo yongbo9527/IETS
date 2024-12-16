@@ -1,10 +1,13 @@
 package org.oneself.balance.demo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  @Author: Ron Yu
@@ -67,5 +70,8 @@ public class CategoryEntity implements Serializable {
      * 删除标识
      */
     private Integer delFlag;
+
+    @TableField(exist = false)
+    private List<CategoryEntity> list = new ArrayList<>();
 
 }

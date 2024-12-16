@@ -3,7 +3,7 @@ package org.oneself.balance.demo.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.oneself.balance.demo.entity.CategoryEntity;
-import org.oneself.balance.demo.vo.CategoryRequestVO;
+import org.oneself.balance.demo.vo.request.CategoryRequestVO;
 
 import java.util.List;
 

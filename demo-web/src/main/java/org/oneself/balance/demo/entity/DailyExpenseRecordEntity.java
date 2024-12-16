@@ -2,7 +2,9 @@ package org.oneself.balance.demo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -37,7 +39,7 @@ public class DailyExpenseRecordEntity implements Serializable {
     /**
      * 消费日期
      */
-    private Date expenseDate;
+    private String expenseDate;
 
     /**
      * 消费类型，1-支出，2-收入
@@ -57,6 +59,7 @@ public class DailyExpenseRecordEntity implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
@@ -67,6 +70,7 @@ public class DailyExpenseRecordEntity implements Serializable {
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     /**
