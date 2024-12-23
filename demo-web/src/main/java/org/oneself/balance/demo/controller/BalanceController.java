@@ -48,7 +48,7 @@ public class BalanceController {
         return result;
     }
 
-    @ApiOperation(value = "查询收支记录")
+    @ApiOperation(value = "查询收支记录结果集返回")
     @PostMapping("/queryBalanceShortHead")
     public R queryBalanceShortHead(@RequestBody QueryBalanceVO vo) {
         R result = balanceService.queryBalanceShortHead(vo);

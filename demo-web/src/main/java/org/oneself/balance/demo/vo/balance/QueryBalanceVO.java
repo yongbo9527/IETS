@@ -11,6 +11,7 @@ import lombok.Data;
 public class QueryBalanceVO {
     private Integer categoryId;
     private String startDate;
+    private String endDate;
     private Integer current = 1;
     private Integer pageSize = 10;
 }

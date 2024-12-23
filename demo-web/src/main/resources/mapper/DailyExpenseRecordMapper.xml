@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.oneself.balance.demo.mapper.DailyExpenseRecordMapper">
+
+
+    <insert id="insertOrUpdate">
+        INSERT INTO daily_expense_record (category_id, expense_amount, expense_date, expense_type,
+                                          remark, create_name, create_time, update_name,update_time)
+        VALUES (#{categoryId}, #{expenseAmount}, #{expenseDate}, #{expenseType}, #{remark},
+                #{createName}, NOW(), #{updateName}, NOW())
+        ON DUPLICATE KEY UPDATE
+            category_id = VALUES(category_id),
+            expense_amount = VALUES(expense_amount),
+            expense_date = VALUES(expense_date),
+            expense_type = VALUES(expense_type),
+            remark = VALUES(remark),
+            create_name = VALUES(create_name),
+            create_time = VALUES(create_time),
+            update_name = VALUES(update_name),
+            update_time = VALUES(update_time)
+    </insert>
+</mapper>

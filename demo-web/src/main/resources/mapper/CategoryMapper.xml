@@ -14,7 +14,7 @@
                 LEFT JOIN base_tally_category category ON record.category_id = category.id
         WHERE
             record.del_flag = 0
-          AND record.expense_date BETWEEN '2024-12-01'
-            AND '2024-12-15'
+          AND record.expense_date BETWEEN #{startDate}
+            AND #{endDate}
     </select>
 </mapper>

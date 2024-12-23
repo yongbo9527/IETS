@@ -60,12 +60,20 @@ public class BalanceServiceImpl implements BalanceService {
         dynamicTable.setHeaders(headers);
 
         // 2. 构建行数据
+        R dynamicTable1 = getDynamicTableResponseR(vo, dynamicTable);
+
+        return dynamicTable1;
+    }
+
+    private R getDynamicTableResponseR(QueryBalanceVO vo, DynamicTableResponse dynamicTable) {
         Page<LinkedHashMap<String, Object>> page = new Page<>();
 
         LambdaQueryWrapper<DailyExpenseRecordEntity> recordWrapper = new LambdaQueryWrapper<>();
         recordWrapper.select(DailyExpenseRecordEntity::getExpenseDate)
                         .groupBy(DailyExpenseRecordEntity::getExpenseDate)
                         .eq(DailyExpenseRecordEntity::getDelFlag, 0)
+                .ge(DailyExpenseRecordEntity::getExpenseDate, vo.getStartDate())
+                .le(DailyExpenseRecordEntity::getExpenseDate, vo.getEndDate())
                 .orderByAsc(DailyExpenseRecordEntity::getExpenseDate);
         Page dateGroupList = dailyExpenseRecordMapper.selectPage(new Page(vo.getCurrent(), vo.getPageSize()), recordWrapper);
         long total = dateGroupList.getTotal();
@@ -82,11 +90,30 @@ public class BalanceServiceImpl implements BalanceService {
                 in(DailyExpenseRecordEntity::getExpenseDate, expenseDateStrList);
         List<DailyExpenseRecordEntity> dateDataList = dailyExpenseRecordMapper.selectList(resultQueryWrapper);
 
+        // 根据 categoryId, expenseDate, delFlag 分组，并将 expenseAmount 累加
+        List<DailyExpenseRecordEntity> result = dateDataList.stream()
+                .collect(Collectors.groupingBy(
+                        // 分组依据：使用一个复合键
+                        record -> Arrays.asList(record.getCategoryId(), record.getExpenseDate(), record.getDelFlag()),
+                        // 累加 expenseAmount
+                        Collectors.reducing(
+                                null,
+                                record -> record,
+                                (a, b) -> {
+                                    if (a == null) return b;
+                                    a.setExpenseAmount(a.getExpenseAmount().add(b.getExpenseAmount()));
+                                    return a;
+                                }
+                        )
+                ))
+                .values().stream()
+                .filter(Objects::nonNull) // 去除可能为 null 的结果
+                .collect(Collectors.toList());
         List<LinkedHashMap<String, Object>> tableRowList = Lists.newArrayListWithCapacity(expenseDateStrList.size());
         for (String expenseDate : expenseDateStrList) {
             LinkedHashMap<String, Object> map = new LinkedHashMap<>();
             map.put("expenseDate", expenseDate);
-            for (DailyExpenseRecordEntity dailyExpenseRecordEntity : dateDataList) {
+            for (DailyExpenseRecordEntity dailyExpenseRecordEntity : result) {
                 if (dailyExpenseRecordEntity.getExpenseDate().equals(expenseDate)) {
                     RecordVO recordVO = new RecordVO();
                     recordVO.setExpenseAmount(dailyExpenseRecordEntity.getExpenseAmount());
@@ -99,7 +126,6 @@ public class BalanceServiceImpl implements BalanceService {
         page.setRecords(tableRowList);
 
         dynamicTable.setRows(page);
-
         return R.ok(dynamicTable);
     }
 
@@ -130,17 +156,22 @@ public class BalanceServiceImpl implements BalanceService {
         // 查询数据，根据数据的类目解析表格头
         List<DataCategoryVO> dataCategoryList = categoryMapper.selectDataCategory(vo);
         if (CollectionUtils.isEmpty(dataCategoryList)) {
-            return R.failed("请先添加分类");
+            dynamicTable.setHeaders(null);
+            Page<LinkedHashMap<String, Object>> page = new Page<>();
+            page.setTotal(0);
+            dynamicTable.setRows(page);
+            return R.ok(dynamicTable);
         }
+        List<DataCategoryVO> dataDistinctCategoryList = dataCategoryList.stream().distinct().collect(Collectors.toList());
         List<CategoryEntity> allCategoryList = new ArrayList<>();
-        List<Integer> parentIds = dataCategoryList.stream().map(DataCategoryVO::getParentId).filter(item -> item != 0).distinct().collect(Collectors.toList());
+        List<Integer> parentIds = dataDistinctCategoryList.stream().map(DataCategoryVO::getParentId).filter(item -> item != 0).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(parentIds)) {
             LambdaQueryWrapper<CategoryEntity> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.select(CategoryEntity::getId, CategoryEntity::getCategoryName, CategoryEntity::getParentId).in(CategoryEntity::getId, parentIds);
             List<CategoryEntity> categoryEntities = categoryMapper.selectList(queryWrapper);
             allCategoryList.addAll(categoryEntities);
         }
-        dataCategoryList.forEach(item -> {
+        dataDistinctCategoryList.forEach(item -> {
             CategoryEntity categoryEntity = new CategoryEntity();
             categoryEntity.setId(item.getCategoryId());
             categoryEntity.setCategoryName(item.getCategoryName());
@@ -151,9 +182,11 @@ public class BalanceServiceImpl implements BalanceService {
 
         buildHeader(resultList,headers);
         dynamicTable.setHeaders(headers);
+        
+        // 2. 构建行数据
+        R<DynamicTableResponse> dynamicTable1 = getDynamicTableResponseR(vo, dynamicTable);
 
-
-        return R.ok(dynamicTable);
+        return dynamicTable1;
     }
 
     /**
