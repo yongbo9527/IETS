@@ -1,10 +1,10 @@
 package org.oneself.balance.demo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -30,6 +30,9 @@ public class DailyExpenseRecordEntity implements Serializable {
      * 类目ID，关联base_tally_category表
      */
     private Integer categoryId;
+
+    @TableField(exist = false)
+    private String categoryName;
 
     /**
      * 消费金额

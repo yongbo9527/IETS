@@ -20,4 +20,26 @@
             update_name = VALUES(update_name),
             update_time = VALUES(update_time)
     </insert>
+    <select id="selectExpenseMetaData" resultType="org.oneself.balance.demo.entity.DailyExpenseRecordEntity">
+        SELECT
+            record.id,
+            record.category_id,
+            category.category_name,
+            record.expense_amount,
+            record.expense_date,
+            record.expense_type,
+            record.remark,
+            record.create_time,
+            record.update_time
+        FROM
+            daily_expense_record record
+                LEFT JOIN base_tally_category category ON record.category_id = category.id
+        WHERE
+            record.del_flag = 0
+            <if test="vo.startDate != null and vo.endDate != null">
+                AND record.expense_date BETWEEN #{vo.startDate}
+                AND #{vo.endDate}
+            </if>
+        ORDER BY record.id DESC
+    </select>
 </mapper>

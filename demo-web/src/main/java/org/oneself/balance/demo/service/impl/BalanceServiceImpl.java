@@ -72,8 +72,8 @@ public class BalanceServiceImpl implements BalanceService {
         recordWrapper.select(DailyExpenseRecordEntity::getExpenseDate)
                         .groupBy(DailyExpenseRecordEntity::getExpenseDate)
                         .eq(DailyExpenseRecordEntity::getDelFlag, 0)
-                .ge(DailyExpenseRecordEntity::getExpenseDate, vo.getStartDate())
-                .le(DailyExpenseRecordEntity::getExpenseDate, vo.getEndDate())
+                .ge(vo.getStartDate() != null, DailyExpenseRecordEntity::getExpenseDate, vo.getStartDate()) // 动态添加条件
+                .le(vo.getEndDate() != null, DailyExpenseRecordEntity::getExpenseDate, vo.getEndDate())   // 动态添加条件
                 .orderByAsc(DailyExpenseRecordEntity::getExpenseDate);
         Page dateGroupList = dailyExpenseRecordMapper.selectPage(new Page(vo.getCurrent(), vo.getPageSize()), recordWrapper);
         long total = dateGroupList.getTotal();
@@ -187,6 +187,13 @@ public class BalanceServiceImpl implements BalanceService {
         R<DynamicTableResponse> dynamicTable1 = getDynamicTableResponseR(vo, dynamicTable);
 
         return dynamicTable1;
+    }
+
+    @Override
+    public R queryDailyExpenseRecordBalance(QueryBalanceVO vo) {
+        Page<QueryBalanceVO> page = new Page<>(vo.getCurrent(), vo.getPageSize());
+        Page<DailyExpenseRecordEntity> pageList = dailyExpenseRecordMapper.selectExpenseMetaData(page,vo);
+        return R.ok(pageList);
     }
 
     /**

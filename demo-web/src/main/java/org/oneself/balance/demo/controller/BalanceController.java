@@ -1,7 +1,6 @@
 package org.oneself.balance.demo.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.oneself.balance.demo.entity.DailyExpenseRecordEntity;
@@ -21,6 +20,15 @@ public class BalanceController {
 
     @Autowired
     private BalanceService balanceService;
+
+
+    @ApiOperation(value = "直接查询收支数据")
+    @PostMapping("/queryDailyExpenseRecordBalance")
+    public R queryDailyExpenseRecordBalance(@RequestBody QueryBalanceVO vo) {
+        R result = balanceService.queryDailyExpenseRecordBalance(vo);
+        return result;
+    }
+
 
     @ApiOperation(value = "新增收支记录")
     @PutMapping("/addBalance")
@@ -62,4 +70,23 @@ public class BalanceController {
     }
 
 
+    // TODO 模板导出
+    @ApiOperation(value = "数据模板导出")
+    @PostMapping("/exportTemplate")
+    public R exportTemplate() {
+        return R.ok("导出成功");
+    }
+    // TODO 数据导入
+    @ApiOperation(value = "数据导入")
+    @PostMapping("/importData")
+    public R importData() {
+        return R.ok("导入成功");
+    }
+
+    // TODO 数据导出
+    @ApiOperation(value = "数据导出")
+    @PostMapping("/exportData")
+    public R exportData() {
+        return R.ok("导出成功");
+    }
 }

@@ -34,4 +34,12 @@ public interface BalanceService {
      * @return
      */
     R queryBalanceShortHead(QueryBalanceVO vo);
+
+    /**
+     * 查询收支记录元数据
+     * @param vo
+     * @return
+     */
+    R queryDailyExpenseRecordBalance(QueryBalanceVO vo);
+
 }

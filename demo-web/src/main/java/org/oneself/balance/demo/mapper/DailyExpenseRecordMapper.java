@@ -1,9 +1,11 @@
 package org.oneself.balance.demo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.oneself.balance.demo.entity.DailyExpenseRecordEntity;
+import org.oneself.balance.demo.vo.balance.QueryBalanceVO;
 
 /**
  *  @Author: Ron Yu
@@ -17,4 +19,13 @@ public interface DailyExpenseRecordMapper extends BaseMapper<DailyExpenseRecordE
      * @param entity
      */
     void insertOrUpdate(DailyExpenseRecordEntity entity);
+
+    /**
+     * 查询支出原始数据
+     *
+     * @param vo
+     * @param queryBalanceVO
+     * @return
+     */
+    Page<DailyExpenseRecordEntity> selectExpenseMetaData(@Param("page") Page<QueryBalanceVO> vo, @Param("vo")  QueryBalanceVO queryBalanceVO);
 }

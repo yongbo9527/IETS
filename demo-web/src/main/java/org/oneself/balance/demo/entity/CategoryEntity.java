@@ -42,6 +42,11 @@ public class CategoryEntity implements Serializable {
     private Integer parentId;
 
     /**
+     * 消费类型，1-支出，2-收入
+     */
+    private Integer expenseType;
+
+    /**
      * 备注
      */
     private String remark;
