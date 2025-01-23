@@ -41,4 +41,36 @@
         ORDER BY
             parent.id;
     </select>
+    <select id="selectDatasetVO" resultType="org.oneself.balance.demo.vo.report.ReportDatasetVO">
+        SELECT
+            t_total.parent_id,
+            t_total.parent_name,
+            SUM( t_total.expense_amount ) expense_amount,
+            t_total.daily_date
+        FROM
+            (
+                SELECT
+                    daily.category_id,
+                    category.category_name,
+                    category.parent_id,
+                    IFNULL( parentCategory.category_name, category.category_name ) parent_name,
+                    daily.expense_amount,
+                    DATE_FORMAT( daily.expense_date, '%Y-%m' ) daily_date
+                FROM
+                    daily_expense_record daily
+                        LEFT JOIN base_tally_category category ON daily.category_id = category.id
+                        LEFT JOIN base_tally_category parentCategory ON category.parent_id = parentCategory.id
+                WHERE
+                    daily.expense_date BETWEEN #{startDate}
+                        AND #{endDate}
+                  AND daily.expense_type = 1
+            ) t_total
+        GROUP BY
+            t_total.parent_id,
+            t_total.parent_name,
+            t_total.daily_date
+        ORDER BY
+            t_total.daily_date ASC
+
+    </select>
 </mapper>

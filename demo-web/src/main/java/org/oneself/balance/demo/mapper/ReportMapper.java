@@ -1,6 +1,7 @@
 package org.oneself.balance.demo.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.oneself.balance.demo.vo.report.ReportDatasetVO;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
 import org.oneself.balance.demo.vo.response.ReportDataResponse;
@@ -27,4 +28,11 @@ public interface ReportMapper {
      * @return
      */
     List<BigCategoryExpenseResponse> selectPieExpenseByCategoryId(ReportRequestVO vo);
+
+    /**
+     * 支出数据集原始数据
+     * @param vo
+     * @return
+     */
+    List<ReportDatasetVO> selectDatasetVO(ReportRequestVO vo);
 }

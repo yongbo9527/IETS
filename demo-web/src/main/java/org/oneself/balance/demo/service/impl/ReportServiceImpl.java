@@ -1,6 +1,5 @@
 package org.oneself.balance.demo.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -8,18 +7,24 @@ import org.oneself.balance.demo.mapper.ReportMapper;
 import org.oneself.balance.demo.service.ReportService;
 import org.oneself.balance.demo.utils.DateUtils;
 import org.oneself.balance.demo.vo.calendar.IncomeExpenseDataVO;
+import org.oneself.balance.demo.vo.report.ReportDatasetVO;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
 import org.oneself.balance.demo.vo.response.LineEchartsResponse;
 import org.oneself.balance.demo.vo.response.ReportDataResponse;
+import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -125,6 +130,9 @@ public class ReportServiceImpl implements ReportService {
     public List<BigCategoryExpenseResponse> queryBigCategoryExpense(ReportRequestVO vo) {
         // 饼图数据
         List<BigCategoryExpenseResponse> list = reportMapper.selectPieExpenseByCategoryId(vo);
+        // 过滤掉支出为0的数据
+        List<BigCategoryExpenseResponse> effectiveList = list.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).collect(Collectors.toList());
+
         BigDecimal totalMoney = list.stream().map(BigCategoryExpenseResponse::getExpenseTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
         List<BigCategoryExpenseResponse> results = Lists.newArrayList();
         if (totalMoney.compareTo(BigDecimal.ZERO) != 0) {
@@ -141,4 +149,58 @@ public class ReportServiceImpl implements ReportService {
     public BigCategoryExpenseResponse querySmallCategoryExpense(ReportRequestVO vo) {
         return null;
     }
+
+    @Override
+    public ReportDatasetResponse queryReportDataset(ReportRequestVO vo) {
+        ReportDatasetResponse response = new ReportDatasetResponse();
+        List<ReportDatasetVO> datasetVOList = reportMapper.selectDatasetVO(vo);
+        if (CollectionUtils.isEmpty(datasetVOList)) {
+            return response;
+        }
+        // 类目种类
+        List<String> categoryList = datasetVOList.stream().map(ReportDatasetVO::getParentName).distinct().collect(Collectors.toList());
+        // 日期列表
+        List<String> dateList = datasetVOList.stream().map(ReportDatasetVO::getDailyDate).distinct().collect(Collectors.toList());
+        List<List<Object>> outerList = Lists.newArrayListWithCapacity(categoryList.size() + 1);
+        List<Object> productList = Lists.newArrayListWithCapacity(dateList.size() + 1);
+        productList.add("product");
+        for (String date : dateList) {
+            productList.add(date);
+        }
+        outerList.add(productList);
+        // 根据不同月份计算数据
+        Map<String, List<ReportDatasetVO>> dateSourceMap = datasetVOList.stream()
+                .collect(Collectors.groupingBy(ReportDatasetVO::getDailyDate)) // 分组
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey()) // 按键升序排序
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, // 处理键冲突（这里不会有冲突）
+                        LinkedHashMap::new // 使用 LinkedHashMap 保持顺序
+                ));
+        LinkedMultiValueMap<String, Object> datasetMap = new LinkedMultiValueMap<>();
+        for (String dateStr : dateSourceMap.keySet()) {
+            List<ReportDatasetVO> datasetVOS = dateSourceMap.get(dateStr);
+            Map<String, BigDecimal> categoryAmountMap = datasetVOS.stream().collect(Collectors.toMap(ReportDatasetVO::getParentName, ReportDatasetVO::getExpenseAmount));
+            for (String s : categoryList) {
+                if (categoryAmountMap.containsKey(s)) {
+                    datasetMap.add(s, categoryAmountMap.get(s));
+                } else {
+                    datasetMap.add(s, 0);
+                }
+            }
+        }
+
+        // 封装成前端需要echarts数据集dataset
+        for (String categoryName : categoryList) {
+            List<Object> objects = datasetMap.get(categoryName);
+            objects.add(0, categoryName);
+            outerList.add(objects);
+        }
+        response.setSource(outerList);
+        return response;
+    }
+
 }

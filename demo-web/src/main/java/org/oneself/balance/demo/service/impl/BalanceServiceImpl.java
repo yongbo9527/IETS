@@ -1,6 +1,7 @@
 package org.oneself.balance.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
@@ -18,6 +19,7 @@ import org.oneself.balance.demo.vo.response.DynamicTableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,9 +78,10 @@ public class BalanceServiceImpl implements BalanceService {
                 .le(vo.getEndDate() != null, DailyExpenseRecordEntity::getExpenseDate, vo.getEndDate())   // 动态添加条件
                 .orderByAsc(DailyExpenseRecordEntity::getExpenseDate);
         Page dateGroupList = dailyExpenseRecordMapper.selectPage(new Page(vo.getCurrent(), vo.getPageSize()), recordWrapper);
+        int size = dateGroupList.getRecords().size();
         long total = dateGroupList.getTotal();
         page.setTotal(total);
-        if (total == 0) {
+        if (size == 0) {
             dynamicTable.setRows(page);
             return R.ok(dynamicTable);
         }
@@ -113,14 +116,17 @@ public class BalanceServiceImpl implements BalanceService {
         for (String expenseDate : expenseDateStrList) {
             LinkedHashMap<String, Object> map = new LinkedHashMap<>();
             map.put("expenseDate", expenseDate);
+            BigDecimal totalAmount = BigDecimal.ZERO;
             for (DailyExpenseRecordEntity dailyExpenseRecordEntity : result) {
                 if (dailyExpenseRecordEntity.getExpenseDate().equals(expenseDate)) {
                     RecordVO recordVO = new RecordVO();
                     recordVO.setExpenseAmount(dailyExpenseRecordEntity.getExpenseAmount());
                     recordVO.setRemark(dailyExpenseRecordEntity.getRemark());
                     map.put(dailyExpenseRecordEntity.getCategoryId().toString(), recordVO);
+                    totalAmount = totalAmount.add(dailyExpenseRecordEntity.getExpenseAmount());
                 }
             }
+            map.put("total", totalAmount);
             tableRowList.add(map);
         }
         page.setRecords(tableRowList);
@@ -181,6 +187,7 @@ public class BalanceServiceImpl implements BalanceService {
         List<CategoryEntity> resultList = buildCategory(allCategoryList);
 
         buildHeader(resultList,headers);
+        headers.add(new TableDetailHeader("total", "总计", null));
         dynamicTable.setHeaders(headers);
         
         // 2. 构建行数据
@@ -194,6 +201,27 @@ public class BalanceServiceImpl implements BalanceService {
         Page<QueryBalanceVO> page = new Page<>(vo.getCurrent(), vo.getPageSize());
         Page<DailyExpenseRecordEntity> pageList = dailyExpenseRecordMapper.selectExpenseMetaData(page,vo);
         return R.ok(pageList);
+    }
+
+    @Override
+    public void updateBalance(DailyExpenseRecordEntity entity) {
+
+        LambdaUpdateWrapper<DailyExpenseRecordEntity> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(DailyExpenseRecordEntity::getExpenseAmount, entity.getExpenseAmount())
+                .set(DailyExpenseRecordEntity::getRemark, entity.getRemark())
+                        .eq(DailyExpenseRecordEntity::getId, entity.getId());
+        dailyExpenseRecordMapper.update(null,updateWrapper);
+
+    }
+
+    @Override
+    public void deleteBalance(Integer id) {
+
+        LambdaUpdateWrapper<DailyExpenseRecordEntity> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(DailyExpenseRecordEntity::getDelFlag, 1)
+                .eq(DailyExpenseRecordEntity::getId, id);
+        dailyExpenseRecordMapper.update(null,updateWrapper);
+
     }
 
     /**

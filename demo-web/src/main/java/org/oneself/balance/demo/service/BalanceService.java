@@ -42,4 +42,15 @@ public interface BalanceService {
      */
     R queryDailyExpenseRecordBalance(QueryBalanceVO vo);
 
+    /**
+     * 修改收支记录
+     * @param entity
+     */
+    void updateBalance(DailyExpenseRecordEntity entity);
+
+    /**
+     * 删除收支记录
+     * @param id
+     */
+    void deleteBalance(Integer id);
 }

@@ -39,14 +39,16 @@ public class BalanceController {
 
     @ApiOperation(value = "修改收支记录")
     @PutMapping("/updateBalance")
-    public void updateBalance() {
-
+    public R updateBalance(@RequestBody DailyExpenseRecordEntity entity) {
+        balanceService.updateBalance(entity);
+        return R.ok("修改成功");
     }
 
     @ApiOperation(value = "删除收支记录")
     @PutMapping("/deleteBalance")
-    public void deleteBalance() {
-
+    public R deleteBalance(Integer id) {
+        balanceService.deleteBalance(id);
+        return R.ok("删除成功");
     }
 
     @ApiOperation(value = "查询收支记录")

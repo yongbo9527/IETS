@@ -5,6 +5,7 @@ import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
 import org.oneself.balance.demo.vo.response.LineEchartsResponse;
 import org.oneself.balance.demo.vo.response.ReportDataResponse;
+import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
 
 import java.util.List;
 
@@ -41,4 +42,11 @@ public interface ReportService {
      * @return
      */
     BigCategoryExpenseResponse querySmallCategoryExpense(ReportRequestVO vo);
+
+    /**
+     * 饼图-折线图支出数据集图表
+     * @param vo
+     * @return
+     */
+    ReportDatasetResponse queryReportDataset(ReportRequestVO vo);
 }

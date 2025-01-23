@@ -7,7 +7,7 @@ import org.oneself.balance.demo.service.ReportService;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
 import org.oneself.balance.demo.vo.response.LineEchartsResponse;
-import org.oneself.balance.demo.vo.response.ReportDataResponse;
+import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,4 +56,13 @@ public class ReportController {
         BigCategoryExpenseResponse pieEchartsResponse = reportService.querySmallCategoryExpense(vo);
         return R.ok(pieEchartsResponse);
     }
+
+    @ApiOperation(value = "饼图-折线图支出数据集图表")
+    @PostMapping("/queryReportDataset")
+    public R queryReportDataset(@RequestBody ReportRequestVO vo) {
+        ReportDatasetResponse response = reportService.queryReportDataset(vo);
+        return R.ok(response);
+    }
+
+
 }
