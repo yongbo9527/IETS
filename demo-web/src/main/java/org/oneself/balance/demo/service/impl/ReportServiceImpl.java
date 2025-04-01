@@ -3,6 +3,7 @@ package org.oneself.balance.demo.service.impl;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.oneself.balance.demo.mapper.ReportMapper;
 import org.oneself.balance.demo.service.ReportService;
 import org.oneself.balance.demo.utils.DateUtils;
@@ -133,10 +134,10 @@ public class ReportServiceImpl implements ReportService {
         // 过滤掉支出为0的数据
         List<BigCategoryExpenseResponse> effectiveList = list.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).collect(Collectors.toList());
 
-        BigDecimal totalMoney = list.stream().map(BigCategoryExpenseResponse::getExpenseTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalMoney = effectiveList.stream().map(BigCategoryExpenseResponse::getExpenseTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
         List<BigCategoryExpenseResponse> results = Lists.newArrayList();
         if (totalMoney.compareTo(BigDecimal.ZERO) != 0) {
-            results = list.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).map(item -> {
+            results = effectiveList.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).map(item -> {
                 item.setExpensePercent(item.getExpenseTotal().divide(totalMoney, 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
                 return item;
             }).collect(Collectors.toList());
@@ -146,8 +147,12 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public BigCategoryExpenseResponse querySmallCategoryExpense(ReportRequestVO vo) {
-        return null;
+    public List<BigCategoryExpenseResponse> querySmallCategoryExpenseDetail(ReportRequestVO vo) {
+        Integer bigCategoryId = vo.getBigCategoryId();
+        List<BigCategoryExpenseResponse> list = reportMapper.selectBigCategoryExpenseDetail(vo.getBigCategoryId());
+
+
+        return list;
     }
 
     @Override
@@ -201,6 +206,29 @@ public class ReportServiceImpl implements ReportService {
         }
         response.setSource(outerList);
         return response;
+    }
+
+    @Override
+    public LineEchartsResponse queryMonthExpenseBar(ReportRequestVO vo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LineEchartsResponse lineEchartsResponse = new LineEchartsResponse();
+        if (StringUtils.isEmpty(vo.getEndDate())) {
+            vo.setEndDate(LocalDate.now().format(formatter));
+            vo.setStartDate(LocalDate.now().withDayOfMonth(1)
+                    .minusMonths(5).format(formatter));
+        }
+        List<String> dateList = DateUtils.getMonthDateList(vo.getStartDate(), vo.getEndDate());
+        lineEchartsResponse.setXAxisData(dateList);
+        List<ReportDataResponse> dataResponseList = reportMapper.selectExpenseByMonthDate(vo);
+        Map<String, BigDecimal> monthAmountMap = dataResponseList.stream().collect(Collectors.toMap(ReportDataResponse::getDate, ReportDataResponse::getAmount));
+        List<BigDecimal> expenseData = Lists.newArrayListWithCapacity(dateList.size());
+        for (int i = 0; i < dateList.size(); i++) {
+            String dateStr = dateList.get(i);
+            BigDecimal orDefault = monthAmountMap.getOrDefault(dateStr, BigDecimal.ZERO);
+            expenseData.add(orDefault);
+        }
+        lineEchartsResponse.setExpenseData(expenseData);
+        return lineEchartsResponse;
     }
 
 }

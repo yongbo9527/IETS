@@ -1,5 +1,7 @@
 package org.oneself.balance.demo.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,6 +31,20 @@ public class DateUtils {
         while (!begin.isAfter(end)) {
             dateList.add(begin.format(formatter));
             begin = begin.plusDays(1);
+        }
+        return dateList;
+    }
+
+    public static List<String> getMonthDateList(String startDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter resultFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        LocalDate begin = LocalDate.parse(startDate, formatter);
+        LocalDate end = LocalDate.parse(endDate, formatter);
+        List<String> dateList = new ArrayList<>();
+
+        while (!begin.isAfter(end)) {
+            dateList.add(begin.format(resultFormatter));
+            begin = begin.plusMonths(1);
         }
         return dateList;
     }

@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/report")
 @Api(value = "报表")
-public class ReportController {
+public class  ReportController {
 
     @Autowired
     private ReportService reportService;
@@ -49,11 +49,11 @@ public class ReportController {
         return R.ok(pieEchartsResponse);
     }
 
-    @ApiOperation(value = "饼图：小类支出")
-    @PostMapping("/querySmallCategoryExpense")
-    public R querySmallCategoryExpense(@RequestBody ReportRequestVO vo) {
+    @ApiOperation(value = "查询大类支出明细")
+    @PostMapping("/queryBigCategoryExpenseDetail")
+    public R querySmallCategoryExpenseDetail(@RequestBody ReportRequestVO vo) {
 
-        BigCategoryExpenseResponse pieEchartsResponse = reportService.querySmallCategoryExpense(vo);
+        List<BigCategoryExpenseResponse> pieEchartsResponse = reportService.querySmallCategoryExpenseDetail(vo);
         return R.ok(pieEchartsResponse);
     }
 
@@ -64,5 +64,11 @@ public class ReportController {
         return R.ok(response);
     }
 
+    @ApiOperation(value = "月度支出数据集柱状图")
+    @PostMapping("/queryMonthExpenseBar")
+    public R queryMonthExpenseBar(@RequestBody ReportRequestVO vo) {
+        LineEchartsResponse lineEchartsResponse = reportService.queryMonthExpenseBar(vo);
+        return R.ok(lineEchartsResponse);
+    }
 
 }

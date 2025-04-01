@@ -18,4 +18,7 @@ public class ReportRequestVO {
 
     @ApiModelProperty("结束日期")
     private String endDate;
+
+    @ApiModelProperty("大类id")
+    private Integer bigCategoryId;
 }

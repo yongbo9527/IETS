@@ -58,7 +58,7 @@ public class BalanceServiceImpl implements BalanceService {
         }
         List<CategoryEntity> resultList = buildCategory(categoryEntities);
 
-        buildHeader(resultList,headers);
+        buildHeader(resultList, headers);
         dynamicTable.setHeaders(headers);
 
         // 2. 构建行数据
@@ -72,11 +72,11 @@ public class BalanceServiceImpl implements BalanceService {
 
         LambdaQueryWrapper<DailyExpenseRecordEntity> recordWrapper = new LambdaQueryWrapper<>();
         recordWrapper.select(DailyExpenseRecordEntity::getExpenseDate)
-                        .groupBy(DailyExpenseRecordEntity::getExpenseDate)
-                        .eq(DailyExpenseRecordEntity::getDelFlag, 0)
+                .groupBy(DailyExpenseRecordEntity::getExpenseDate)
+                .eq(DailyExpenseRecordEntity::getDelFlag, 0)
                 .ge(vo.getStartDate() != null, DailyExpenseRecordEntity::getExpenseDate, vo.getStartDate()) // 动态添加条件
                 .le(vo.getEndDate() != null, DailyExpenseRecordEntity::getExpenseDate, vo.getEndDate())   // 动态添加条件
-                .orderByAsc(DailyExpenseRecordEntity::getExpenseDate);
+                .orderByDesc(DailyExpenseRecordEntity::getExpenseDate);
         Page dateGroupList = dailyExpenseRecordMapper.selectPage(new Page(vo.getCurrent(), vo.getPageSize()), recordWrapper);
         int size = dateGroupList.getRecords().size();
         long total = dateGroupList.getTotal();
@@ -105,6 +105,7 @@ public class BalanceServiceImpl implements BalanceService {
                                 (a, b) -> {
                                     if (a == null) return b;
                                     a.setExpenseAmount(a.getExpenseAmount().add(b.getExpenseAmount()));
+                                    a.setRemark(a.getRemark() + "(" + a.getExpenseAmount() + ")" + "->" + b.getRemark() + "(" + b.getExpenseAmount() + ")");
                                     return a;
                                 }
                         )
@@ -116,17 +117,14 @@ public class BalanceServiceImpl implements BalanceService {
         for (String expenseDate : expenseDateStrList) {
             LinkedHashMap<String, Object> map = new LinkedHashMap<>();
             map.put("expenseDate", expenseDate);
-            BigDecimal totalAmount = BigDecimal.ZERO;
             for (DailyExpenseRecordEntity dailyExpenseRecordEntity : result) {
                 if (dailyExpenseRecordEntity.getExpenseDate().equals(expenseDate)) {
                     RecordVO recordVO = new RecordVO();
                     recordVO.setExpenseAmount(dailyExpenseRecordEntity.getExpenseAmount());
                     recordVO.setRemark(dailyExpenseRecordEntity.getRemark());
                     map.put(dailyExpenseRecordEntity.getCategoryId().toString(), recordVO);
-                    totalAmount = totalAmount.add(dailyExpenseRecordEntity.getExpenseAmount());
                 }
             }
-            map.put("total", totalAmount);
             tableRowList.add(map);
         }
         page.setRecords(tableRowList);
@@ -186,10 +184,9 @@ public class BalanceServiceImpl implements BalanceService {
         });
         List<CategoryEntity> resultList = buildCategory(allCategoryList);
 
-        buildHeader(resultList,headers);
-        headers.add(new TableDetailHeader("total", "总计", null));
+        buildHeader(resultList, headers);
         dynamicTable.setHeaders(headers);
-        
+
         // 2. 构建行数据
         R<DynamicTableResponse> dynamicTable1 = getDynamicTableResponseR(vo, dynamicTable);
 
@@ -199,7 +196,7 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public R queryDailyExpenseRecordBalance(QueryBalanceVO vo) {
         Page<QueryBalanceVO> page = new Page<>(vo.getCurrent(), vo.getPageSize());
-        Page<DailyExpenseRecordEntity> pageList = dailyExpenseRecordMapper.selectExpenseMetaData(page,vo);
+        Page<DailyExpenseRecordEntity> pageList = dailyExpenseRecordMapper.selectExpenseMetaData(page, vo);
         return R.ok(pageList);
     }
 
@@ -209,8 +206,8 @@ public class BalanceServiceImpl implements BalanceService {
         LambdaUpdateWrapper<DailyExpenseRecordEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(DailyExpenseRecordEntity::getExpenseAmount, entity.getExpenseAmount())
                 .set(DailyExpenseRecordEntity::getRemark, entity.getRemark())
-                        .eq(DailyExpenseRecordEntity::getId, entity.getId());
-        dailyExpenseRecordMapper.update(null,updateWrapper);
+                .eq(DailyExpenseRecordEntity::getId, entity.getId());
+        dailyExpenseRecordMapper.update(null, updateWrapper);
 
     }
 
@@ -220,7 +217,7 @@ public class BalanceServiceImpl implements BalanceService {
         LambdaUpdateWrapper<DailyExpenseRecordEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(DailyExpenseRecordEntity::getDelFlag, 1)
                 .eq(DailyExpenseRecordEntity::getId, id);
-        dailyExpenseRecordMapper.update(null,updateWrapper);
+        dailyExpenseRecordMapper.update(null, updateWrapper);
 
     }
 

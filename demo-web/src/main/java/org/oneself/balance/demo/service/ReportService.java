@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.api.R;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
 import org.oneself.balance.demo.vo.response.LineEchartsResponse;
-import org.oneself.balance.demo.vo.response.ReportDataResponse;
 import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public interface ReportService {
      * @param vo
      * @return
      */
-    BigCategoryExpenseResponse querySmallCategoryExpense(ReportRequestVO vo);
+    List<BigCategoryExpenseResponse> querySmallCategoryExpenseDetail(ReportRequestVO vo);
 
     /**
      * 饼图-折线图支出数据集图表
@@ -49,4 +48,11 @@ public interface ReportService {
      * @return
      */
     ReportDatasetResponse queryReportDataset(ReportRequestVO vo);
+
+    /**
+     * 折线图：按月支出柱状图
+     * @param vo
+     * @return
+     */
+    LineEchartsResponse queryMonthExpenseBar(ReportRequestVO vo);
 }

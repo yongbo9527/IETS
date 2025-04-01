@@ -16,5 +16,7 @@
             record.del_flag = 0
           AND record.expense_date BETWEEN #{startDate}
             AND #{endDate}
+        ORDER BY
+            record.category_id
     </select>
 </mapper>

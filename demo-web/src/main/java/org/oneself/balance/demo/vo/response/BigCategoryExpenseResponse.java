@@ -30,4 +30,10 @@ public class BigCategoryExpenseResponse {
     @ApiModelProperty("支出笔数")
     private Integer expenseCount;
 
+    @ApiModelProperty("子类目id")
+    private Integer childId;
+
+    @ApiModelProperty("子类目名称")
+    private String childCategory;
+
 }

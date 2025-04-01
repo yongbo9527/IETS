@@ -35,4 +35,18 @@ public interface ReportMapper {
      * @return
      */
     List<ReportDatasetVO> selectDatasetVO(ReportRequestVO vo);
+
+    /**
+     * 查询各个月度支出数据
+     * @param vo
+     * @return
+     */
+    List<ReportDataResponse> selectExpenseByMonthDate(ReportRequestVO vo);
+
+    /**
+     * 查询大类支出明细
+     * @param bigCategoryId
+     * @return
+     */
+    List<BigCategoryExpenseResponse> selectBigCategoryExpenseDetail(Integer bigCategoryId);
 }
