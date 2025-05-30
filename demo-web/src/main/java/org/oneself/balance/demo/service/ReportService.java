@@ -3,6 +3,7 @@ package org.oneself.balance.demo.service;
 import com.baomidou.mybatisplus.extension.api.R;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
+import org.oneself.balance.demo.vo.response.ExpenseDetailResponse;
 import org.oneself.balance.demo.vo.response.LineEchartsResponse;
 import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
 
@@ -55,4 +56,11 @@ public interface ReportService {
      * @return
      */
     LineEchartsResponse queryMonthExpenseBar(ReportRequestVO vo);
+
+    /**
+     * 查询大类支出明细详情列表
+     * @param vo
+     * @return
+     */
+    List<ExpenseDetailResponse> queryExpenseDetailList(ReportRequestVO vo);
 }

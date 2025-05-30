@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import org.oneself.balance.demo.service.ReportService;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
+import org.oneself.balance.demo.vo.response.ExpenseDetailResponse;
 import org.oneself.balance.demo.vo.response.LineEchartsResponse;
 import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,14 @@ public class  ReportController {
 
         List<BigCategoryExpenseResponse> pieEchartsResponse = reportService.querySmallCategoryExpenseDetail(vo);
         return R.ok(pieEchartsResponse);
+    }
+
+    @ApiOperation(value = "查询大类支出明细详情列表")
+    @PostMapping("/queryExpenseDetailList")
+    public R queryExpenseDetailList(@RequestBody ReportRequestVO vo) {
+
+        List<ExpenseDetailResponse> list = reportService.queryExpenseDetailList(vo);
+        return R.ok(list);
     }
 
     @ApiOperation(value = "饼图-折线图支出数据集图表")

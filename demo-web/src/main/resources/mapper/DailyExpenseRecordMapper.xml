@@ -40,6 +40,6 @@
                 AND record.expense_date BETWEEN #{vo.startDate}
                 AND #{vo.endDate}
             </if>
-        ORDER BY record.expense_date DESC
+        ORDER BY record.expense_date DESC, record.id ASC
     </select>
 </mapper>

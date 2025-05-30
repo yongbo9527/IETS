@@ -21,4 +21,7 @@ public class ReportRequestVO {
 
     @ApiModelProperty("大类id")
     private Integer bigCategoryId;
+
+    @ApiModelProperty("小类id")
+    private Integer smallCategoryId;
 }

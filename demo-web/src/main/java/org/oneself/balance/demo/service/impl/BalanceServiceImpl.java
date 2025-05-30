@@ -104,8 +104,9 @@ public class BalanceServiceImpl implements BalanceService {
                                 record -> record,
                                 (a, b) -> {
                                     if (a == null) return b;
+                                    BigDecimal expenseAmount = a.getExpenseAmount();
                                     a.setExpenseAmount(a.getExpenseAmount().add(b.getExpenseAmount()));
-                                    a.setRemark(a.getRemark() + "(" + a.getExpenseAmount() + ")" + "->" + b.getRemark() + "(" + b.getExpenseAmount() + ")");
+                                    a.setRemark(a.getRemark() + "(" + expenseAmount + ")" + "->" + b.getRemark() + "(" + b.getExpenseAmount() + ")");
                                     return a;
                                 }
                         )
@@ -196,7 +197,7 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public R queryDailyExpenseRecordBalance(QueryBalanceVO vo) {
         Page<QueryBalanceVO> page = new Page<>(vo.getCurrent(), vo.getPageSize());
-        Page<DailyExpenseRecordEntity> pageList = dailyExpenseRecordMapper.selectExpenseMetaData(page, vo);
+            Page<DailyExpenseRecordEntity> pageList = dailyExpenseRecordMapper.selectExpenseMetaData(page, vo);
         return R.ok(pageList);
     }
 

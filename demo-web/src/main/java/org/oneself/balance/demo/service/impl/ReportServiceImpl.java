@@ -10,10 +10,7 @@ import org.oneself.balance.demo.utils.DateUtils;
 import org.oneself.balance.demo.vo.calendar.IncomeExpenseDataVO;
 import org.oneself.balance.demo.vo.report.ReportDatasetVO;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
-import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
-import org.oneself.balance.demo.vo.response.LineEchartsResponse;
-import org.oneself.balance.demo.vo.response.ReportDataResponse;
-import org.oneself.balance.demo.vo.response.ReportDatasetResponse;
+import org.oneself.balance.demo.vo.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -137,19 +134,17 @@ public class ReportServiceImpl implements ReportService {
         BigDecimal totalMoney = effectiveList.stream().map(BigCategoryExpenseResponse::getExpenseTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
         List<BigCategoryExpenseResponse> results = Lists.newArrayList();
         if (totalMoney.compareTo(BigDecimal.ZERO) != 0) {
-            results = effectiveList.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).map(item -> {
+            results = effectiveList.stream().map(item -> {
                 item.setExpensePercent(item.getExpenseTotal().divide(totalMoney, 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
                 return item;
             }).collect(Collectors.toList());
         }
-
         return results;
     }
 
     @Override
     public List<BigCategoryExpenseResponse> querySmallCategoryExpenseDetail(ReportRequestVO vo) {
-        Integer bigCategoryId = vo.getBigCategoryId();
-        List<BigCategoryExpenseResponse> list = reportMapper.selectBigCategoryExpenseDetail(vo.getBigCategoryId());
+        List<BigCategoryExpenseResponse> list = reportMapper.selectBigCategoryExpenseDetail(vo);
 
 
         return list;
@@ -229,6 +224,13 @@ public class ReportServiceImpl implements ReportService {
         }
         lineEchartsResponse.setExpenseData(expenseData);
         return lineEchartsResponse;
+    }
+
+    @Override
+    public List<ExpenseDetailResponse> queryExpenseDetailList(ReportRequestVO vo) {
+        List<ExpenseDetailResponse> list = reportMapper.selectExpenseDetailList(vo);
+
+        return list;
     }
 
 }

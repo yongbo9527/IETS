@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.oneself.balance.demo.vo.report.ReportDatasetVO;
 import org.oneself.balance.demo.vo.request.ReportRequestVO;
 import org.oneself.balance.demo.vo.response.BigCategoryExpenseResponse;
+import org.oneself.balance.demo.vo.response.ExpenseDetailResponse;
 import org.oneself.balance.demo.vo.response.ReportDataResponse;
 
 import java.util.List;
@@ -45,8 +46,15 @@ public interface ReportMapper {
 
     /**
      * 查询大类支出明细
-     * @param bigCategoryId
+     * @param vo
      * @return
      */
-    List<BigCategoryExpenseResponse> selectBigCategoryExpenseDetail(Integer bigCategoryId);
+    List<BigCategoryExpenseResponse> selectBigCategoryExpenseDetail(ReportRequestVO vo);
+
+    /**
+     * 查询大类支出明细详情列表
+     * @param vo
+     * @return
+     */
+    List<ExpenseDetailResponse> selectExpenseDetailList(ReportRequestVO vo);
 }
