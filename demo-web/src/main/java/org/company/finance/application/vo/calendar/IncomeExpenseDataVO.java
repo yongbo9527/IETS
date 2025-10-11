@@ -1,4 +1,4 @@
-package org.oneself.balance.demo.vo.calendar;
+package org.company.finance.application.vo.calendar;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

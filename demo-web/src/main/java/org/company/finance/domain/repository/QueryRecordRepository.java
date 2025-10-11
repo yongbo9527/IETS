@@ -5,24 +5,18 @@ import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  *  @Author: Ron Yu
- *  @Create: 2025-10-09 17:42
+ *  @Create: 2025-10-11 16:55
  *
  */
-public interface DailyExpenseRecordRepository {
-    void save(DailyExpenseRecordEntity record);
-    void update(DailyExpenseRecordEntity record);
-    void deleteById(Long id, Long userId); // 必须带 userId 防越权
-    Optional<DailyExpenseRecordEntity> findByIdAndUserId(Long id, Long userId);
-
-    // 查询：按日期范围查用户的所有记录（用于聚合）
+public interface QueryRecordRepository {
     Page<DailyExpenseRecordEntity> findByUserIdAndDateRange(Long userId, QueryBalanceVO vo);
 
-    Page<String> findDistinctDates(QueryBalanceVO vo, long current, long size);
-    List<DailyExpenseRecordEntity> findByDates(List<String> dates);
+    Page<DailyExpenseRecordEntity> findDistinctDates(QueryBalanceVO vo, Integer current, Integer pageSize);
+
+    List<DailyExpenseRecordEntity> findByDates(List<String> records);
 
     Page<DailyExpenseRecordEntity> findPage(QueryBalanceVO vo, long current, long size);
 

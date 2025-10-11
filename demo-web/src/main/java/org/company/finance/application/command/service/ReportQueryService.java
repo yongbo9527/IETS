@@ -1,17 +1,15 @@
-package org.company.finance.application.service.impl;
+package org.company.finance.application.command.service;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.company.finance.application.vo.calendar.IncomeExpenseDataVO;
 import org.company.finance.application.vo.report.ReportDatasetVO;
 import org.company.finance.application.vo.request.ReportRequestVO;
 import org.company.finance.application.vo.response.*;
-import org.company.finance.infrastructure.persistence.mapper.ReportMapper;
-import org.company.finance.application.service.ReportService;
 import org.company.finance.common.util.DateUtils;
-import org.oneself.balance.demo.vo.calendar.IncomeExpenseDataVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.company.finance.domain.repository.QueryReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -28,17 +26,15 @@ import java.util.stream.Collectors;
 
 /**
  *  @Author: Ron Yu
- *  @Create: 2024-12-23 16:19
+ *  @Create: 2025-10-11 15:10
  *
  */
 @Service
-public class ReportServiceImpl implements ReportService {
+@RequiredArgsConstructor
+public class ReportQueryService {
 
-    @Autowired
-    private ReportMapper reportMapper;
-
-    @Override
-    public R queryDailyExpense(String searchDate) {
+    private final QueryReportRepository queryReportRepository;
+    public Map<String, IncomeExpenseDataVO> queryDailyExpense(String searchDate) {
         // 使用DateTimeFormatter解析年份和月份
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
         YearMonth yearMonth = YearMonth.parse(searchDate, formatter);
@@ -56,7 +52,7 @@ public class ReportServiceImpl implements ReportService {
         ReportRequestVO requestVO = new ReportRequestVO();
         requestVO.setStartDate(startDateStr);
         requestVO.setEndDate(endDateStr);
-        List<ReportDataResponse> reportDataResponseList = reportMapper.selectExpenseByDate(requestVO);
+        List<ReportDataResponse> reportDataResponseList = queryReportRepository.selectExpenseByDate(requestVO);
         // 收入list
         List<ReportDataResponse> incomeLists = reportDataResponseList.stream().filter(item -> item.getExpenseType() == 2).collect(Collectors.toList());
         // 支出list
@@ -87,13 +83,12 @@ public class ReportServiceImpl implements ReportService {
                 }
             });
         }
-        return R.ok(expenseMap);
+        return expenseMap;
     }
 
-    @Override
     public LineEchartsResponse queryMonthExpense(ReportRequestVO vo) {
         List<String> dateList = DateUtils.getDateList(vo.getStartDate(), vo.getEndDate());
-        List<ReportDataResponse> reportDataResponseList = reportMapper.selectExpenseByDate(vo);
+        List<ReportDataResponse> reportDataResponseList = queryReportRepository.selectExpenseByDate(vo);
         LineEchartsResponse lineEchartsResponse = new LineEchartsResponse();
         if (CollectionUtils.isEmpty(reportDataResponseList)) {
             lineEchartsResponse.setXAxisData(dateList);
@@ -124,10 +119,9 @@ public class ReportServiceImpl implements ReportService {
         return lineEchartsResponse;
     }
 
-    @Override
     public List<BigCategoryExpenseResponse> queryBigCategoryExpense(ReportRequestVO vo) {
         // 饼图数据
-        List<BigCategoryExpenseResponse> list = reportMapper.selectPieExpenseByCategoryId(vo);
+        List<BigCategoryExpenseResponse> list = queryReportRepository.selectPieExpenseByCategoryId(vo);
         // 过滤掉支出为0的数据
         List<BigCategoryExpenseResponse> effectiveList = list.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).collect(Collectors.toList());
 
@@ -142,18 +136,40 @@ public class ReportServiceImpl implements ReportService {
         return results;
     }
 
-    @Override
     public List<BigCategoryExpenseResponse> querySmallCategoryExpenseDetail(ReportRequestVO vo) {
-        List<BigCategoryExpenseResponse> list = reportMapper.selectBigCategoryExpenseDetail(vo);
-
-
+        List<BigCategoryExpenseResponse> list = queryReportRepository.selectBigCategoryExpenseDetail(vo);
         return list;
     }
 
-    @Override
+    public LineEchartsResponse queryMonthExpenseBar(ReportRequestVO vo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LineEchartsResponse lineEchartsResponse = new LineEchartsResponse();
+        if (StringUtils.isEmpty(vo.getEndDate())) {
+            vo.setEndDate(LocalDate.now().format(formatter));
+            vo.setStartDate(LocalDate.now().withMonth(2).withDayOfMonth(1).format(formatter));
+        }
+        List<String> dateList = DateUtils.getMonthDateList(vo.getStartDate(), vo.getEndDate());
+        lineEchartsResponse.setXAxisData(dateList);
+        List<ReportDataResponse> dataResponseList = queryReportRepository.selectExpenseByMonthDate(vo);
+        Map<String, BigDecimal> monthAmountMap = dataResponseList.stream().collect(Collectors.toMap(ReportDataResponse::getDate, ReportDataResponse::getAmount));
+        List<BigDecimal> expenseData = Lists.newArrayListWithCapacity(dateList.size());
+        for (int i = 0; i < dateList.size(); i++) {
+            String dateStr = dateList.get(i);
+            BigDecimal orDefault = monthAmountMap.getOrDefault(dateStr, BigDecimal.ZERO);
+            expenseData.add(orDefault);
+        }
+        lineEchartsResponse.setExpenseData(expenseData);
+        return lineEchartsResponse;
+    }
+
+    public List<ExpenseDetailResponse> queryExpenseDetailList(ReportRequestVO vo) {
+        List<ExpenseDetailResponse> list = queryReportRepository.selectExpenseDetailList(vo);
+        return list;
+    }
+
     public ReportDatasetResponse queryReportDataset(ReportRequestVO vo) {
         ReportDatasetResponse response = new ReportDatasetResponse();
-        List<ReportDatasetVO> datasetVOList = reportMapper.selectDatasetVO(vo);
+        List<ReportDatasetVO> datasetVOList = queryReportRepository.selectDatasetVO(vo);
         if (CollectionUtils.isEmpty(datasetVOList)) {
             return response;
         }
@@ -202,34 +218,4 @@ public class ReportServiceImpl implements ReportService {
         response.setSource(outerList);
         return response;
     }
-
-    @Override
-    public LineEchartsResponse queryMonthExpenseBar(ReportRequestVO vo) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LineEchartsResponse lineEchartsResponse = new LineEchartsResponse();
-        if (StringUtils.isEmpty(vo.getEndDate())) {
-            vo.setEndDate(LocalDate.now().format(formatter));
-            vo.setStartDate(LocalDate.now().withMonth(2).withDayOfMonth(1).format(formatter));
-        }
-        List<String> dateList = DateUtils.getMonthDateList(vo.getStartDate(), vo.getEndDate());
-        lineEchartsResponse.setXAxisData(dateList);
-        List<ReportDataResponse> dataResponseList = reportMapper.selectExpenseByMonthDate(vo);
-        Map<String, BigDecimal> monthAmountMap = dataResponseList.stream().collect(Collectors.toMap(ReportDataResponse::getDate, ReportDataResponse::getAmount));
-        List<BigDecimal> expenseData = Lists.newArrayListWithCapacity(dateList.size());
-        for (int i = 0; i < dateList.size(); i++) {
-            String dateStr = dateList.get(i);
-            BigDecimal orDefault = monthAmountMap.getOrDefault(dateStr, BigDecimal.ZERO);
-            expenseData.add(orDefault);
-        }
-        lineEchartsResponse.setExpenseData(expenseData);
-        return lineEchartsResponse;
-    }
-
-    @Override
-    public List<ExpenseDetailResponse> queryExpenseDetailList(ReportRequestVO vo) {
-        List<ExpenseDetailResponse> list = reportMapper.selectExpenseDetailList(vo);
-
-        return list;
-    }
-
 }

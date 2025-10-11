@@ -1,4 +1,4 @@
-package org.company.finance.application.service;
+package org.company.finance.application.command.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,8 @@ import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.application.vo.balance.RecordVO;
 import org.company.finance.application.vo.catagory.DataCategoryVO;
 import org.company.finance.application.vo.response.DynamicTableResponse;
-import org.company.finance.domain.repository.DailyExpenseRecordRepository;
+import org.company.finance.domain.repository.QueryCategoryRepository;
+import org.company.finance.domain.repository.QueryRecordRepository;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordEntity;
 import org.springframework.stereotype.Service;
@@ -19,41 +20,26 @@ import java.util.stream.Collectors;
 
 /**
  *  @Author: Ron Yu
- *  @Create: 2025-10-09 18:26
+ *  @Create: 2025-10-11 15:09
  *
- *  @Description: 协调 finance 领域
  */
 @Service
 @RequiredArgsConstructor
-public class FinanceAppService {
+public class FinanceQueryService {
 
-    private final DailyExpenseRecordRepository dailyExpenseRecordRepository;
+    private final QueryRecordRepository queryRecordRepository;
 
-    private final CategoryDomainService categoryDomainService;
-    private final ExpenseQueryService expenseQueryService;
-
+    private final QueryCategoryRepository queryCategoryRepository;
     public Page<DailyExpenseRecordEntity> listDailyRecords(QueryBalanceVO vo) {
-        Page<DailyExpenseRecordEntity> expenseRecordEntityPage = dailyExpenseRecordRepository.findByUserIdAndDateRange(null, vo);
+        Page<DailyExpenseRecordEntity> expenseRecordEntityPage = queryRecordRepository.findByUserIdAndDateRange(null, vo);
         return expenseRecordEntityPage;
-    }
-
-    public void saveRecord(DailyExpenseRecordEntity entity) {
-        dailyExpenseRecordRepository.save(entity);
-    }
-
-    public void updateRecord(DailyExpenseRecordEntity entity) {
-        dailyExpenseRecordRepository.update(entity);
-    }
-
-    public void deleteRecord(Long id) {
-        dailyExpenseRecordRepository.deleteById(id, null);
     }
 
     @Transactional(readOnly = true)
     public DynamicTableResponse getBalanceTable(QueryBalanceVO vo) {
         DynamicTableResponse response = new DynamicTableResponse();
         // 1. 校验分类是否存在
-        List<CategoryEntity> categories = categoryDomainService.findActiveCategories();
+        List<CategoryEntity> categories = queryCategoryRepository.findActiveOrderByAsc();
         if (CollectionUtils.isEmpty(categories)) {
             return response;
         }
@@ -62,7 +48,7 @@ public class FinanceAppService {
         LinkedList<TableDetailHeader> headers = buildHeaders(categories);
 
         // 3. 查询并构建行数据
-        Page<LinkedHashMap<String, Object>> rows = expenseQueryService.queryGroupedRecords(vo, categories);
+        Page<LinkedHashMap<String, Object>> rows = queryGroupedRecords(vo, categories);
 
         // 4. 组装响应
         response.setHeaders(headers);
@@ -72,7 +58,6 @@ public class FinanceAppService {
     }
 
     public DynamicTableResponse getCompactBalanceTable(QueryBalanceVO vo) {
-
         // 初始化响应对象
         DynamicTableResponse dynamicTable = new DynamicTableResponse();
 
@@ -87,18 +72,6 @@ public class FinanceAppService {
         return dynamicTable;
     }
 
-    private LinkedList<TableDetailHeader> buildHeaders(List<CategoryEntity> categories) {
-        LinkedList<TableDetailHeader> headers = new LinkedList<>();
-        headers.add(new TableDetailHeader("expenseDate", "日期", null));
-        categories.forEach(c -> headers.add(new TableDetailHeader(c.getId().toString(), c.getCategoryName(), null)));
-        return headers;
-    }
-
-
-// ========================================
-// 1. 构建表头逻辑
-// ========================================
-
     /**
      * 构建动态表头（支持父子类目嵌套）
      */
@@ -107,7 +80,7 @@ public class FinanceAppService {
         headers.add(new TableDetailHeader("expenseDate", "日期", null));
 
         // 查询涉及的数据类目
-        List<DataCategoryVO> dataCategoryList = categoryDomainService.findDataCategories(vo);
+        List<DataCategoryVO> dataCategoryList = queryCategoryRepository.findDataCategory(vo);
         if (CollectionUtils.isEmpty(dataCategoryList)) {
             return headers; // 无类目时只保留“日期”列
         }
@@ -120,7 +93,6 @@ public class FinanceAppService {
         buildHeader(headers, tree);
         return headers;
     }
-
 
     /**
      * 将类目树转换为 TableDetailHeader 结构
@@ -148,6 +120,7 @@ public class FinanceAppService {
             headers.add(parentHeader);
         }
     }
+
 
     /**
      * 构建类目树结构（父 -> 子）
@@ -177,40 +150,11 @@ public class FinanceAppService {
 
         return parents;
     }
-
-    /**
-     * 补全类目层级信息：将父类目从数据库加载，并合并子类目
-     */
-    private List<CategoryEntity> enrichCategoryHierarchy(List<DataCategoryVO> dataCategoryList) {
-        List<DataCategoryVO> distinctCategories = dataCategoryList.stream()
-                .distinct()
-                .collect(Collectors.toList());
-
-        List<CategoryEntity> result = new ArrayList<>();
-
-        // 提取所有非根类目的父类目ID
-        Set<Integer> parentIds = distinctCategories.stream()
-                .map(DataCategoryVO::getParentId)
-                .filter(id -> id != 0)
-                .collect(Collectors.toSet());
-
-        // 批量查询父类目
-        if (!parentIds.isEmpty()) {
-            List<CategoryEntity> allCategories = categoryDomainService.findByIds(parentIds);
-            result.addAll(allCategories);
-        }
-
-        // 添加当前类目（子类目）
-        for (DataCategoryVO item : distinctCategories) {
-            CategoryEntity entity = new CategoryEntity();
-            entity.setId(item.getCategoryId());
-            entity.setCategoryName(item.getCategoryName());
-            entity.setParentId(item.getParentId());
-            entity.setList(new ArrayList<>()); // 初始化子类目列表
-            result.add(entity);
-        }
-
-        return result;
+    private LinkedList<TableDetailHeader> buildHeaders(List<CategoryEntity> categories) {
+        LinkedList<TableDetailHeader> headers = new LinkedList<>();
+        headers.add(new TableDetailHeader("expenseDate", "日期", null));
+        categories.forEach(c -> headers.add(new TableDetailHeader(c.getId().toString(), c.getCategoryName(), null)));
+        return headers;
     }
 
     /**
@@ -220,7 +164,7 @@ public class FinanceAppService {
         Page<LinkedHashMap<String, Object>> page = new Page<>(vo.getCurrent(), vo.getPageSize());
 
         // 1. 查询所有不重复的 expenseDate（用于分页）
-        Page<DailyExpenseRecordEntity> datePage = findPagedExpenseDates(vo, page.getCurrent(), page.getSize());
+        Page<DailyExpenseRecordEntity> datePage = queryRecordRepository.findPage(vo, page.getCurrent(), page.getSize());
         List<String> expenseDates = datePage.getRecords().stream()
                 .map(DailyExpenseRecordEntity::getExpenseDate)
                 .collect(Collectors.toList());
@@ -234,7 +178,7 @@ public class FinanceAppService {
         }
 
         // 2. 查询这些日期下的所有明细记录
-        List<DailyExpenseRecordEntity> allRecords = findRecordsByExpenseDates(expenseDates);
+        List<DailyExpenseRecordEntity> allRecords = queryRecordRepository.findList(expenseDates);
 
         // 3. 按 categoryId + expenseDate 分组并累加金额
         Map<String, DailyExpenseRecordEntity> groupedMap = allRecords.stream()
@@ -276,20 +220,98 @@ public class FinanceAppService {
         return page;
     }
 
-    /**
-     * 查询不重复的 expenseDate 分页结果
-     */
-    private Page<DailyExpenseRecordEntity> findPagedExpenseDates(QueryBalanceVO vo, long current, long size) {
-        Page<DailyExpenseRecordEntity> page = dailyExpenseRecordRepository.findPage(vo, current, size);
-        return page;
+    public Page<LinkedHashMap<String, Object>> queryGroupedRecords(QueryBalanceVO vo, List<CategoryEntity> categories) {
+
+        // 1. 先查出所有涉及的日期（分页）
+        Page<String> datePage = new Page<>(vo.getCurrent(), vo.getPageSize());
+        Page<DailyExpenseRecordEntity> pageResult = queryRecordRepository.findDistinctDates(vo, vo.getCurrent(), vo.getPageSize());
+        datePage.setRecords(pageResult.getRecords().stream()
+                .map(DailyExpenseRecordEntity::getExpenseDate)
+                .collect(Collectors.toList()));
+        datePage.setTotal(pageResult.getTotal());
+        if (datePage.getRecords().isEmpty()) {
+            return new Page<>(datePage.getCurrent(), datePage.getSize());
+        }
+
+        // 2. 查出这些日期下的所有记录
+        List<DailyExpenseRecordEntity> records = queryRecordRepository.findByDates(datePage.getRecords());
+
+        // 3. 按 categoryId + expenseDate 分组并合并金额
+        Map<String, Map<String, RecordVO>> groupedData = records.stream()
+                .collect(Collectors.groupingBy(
+                        r -> r.getExpenseDate(),  // 外层：日期
+                        Collectors.groupingBy(
+                                r -> r.getCategoryId().toString(),  // 内层：分类ID
+                                Collectors.reducing(
+                                        null,
+                                        record -> {
+                                            RecordVO itemVo = new RecordVO();
+                                            itemVo.setExpenseAmount(record.getExpenseAmount());
+                                            itemVo.setRemark(record.getRemark());
+                                            return itemVo;
+                                        },
+                                        (a, b) -> {
+                                            if (a == null) return b;
+                                            a.setExpenseAmount(a.getExpenseAmount().add(b.getExpenseAmount()));
+                                            a.setRemark(a.getRemark() + " → " + b.getRemark());
+                                            return a;
+                                        }
+                                )
+                        )
+                ));
+
+        // 4. 构造表格行
+        List<LinkedHashMap<String, Object>> tableRows = datePage.getRecords().stream()
+                .map(date -> {
+                    LinkedHashMap<String, Object> row = new LinkedHashMap<>();
+                    row.put("expenseDate", date);
+                    Map<String, RecordVO> categoryData = groupedData.getOrDefault(date, Collections.emptyMap());
+                    categories.forEach(c -> row.put(c.getId().toString(), categoryData.get(c.getId().toString())));
+                    return row;
+                })
+                .collect(Collectors.toList());
+
+        Page<LinkedHashMap<String, Object>> result = new Page<>();
+        result.setCurrent(datePage.getCurrent());
+        result.setSize(datePage.getSize());
+        result.setTotal(datePage.getTotal());
+        result.setRecords(tableRows);
+        return result;
     }
 
     /**
-     * 根据日期列表查询所有相关记录
+     * 补全类目层级信息：将父类目从数据库加载，并合并子类目
      */
-    private List<DailyExpenseRecordEntity> findRecordsByExpenseDates(List<String> expenseDates) {
-        List<DailyExpenseRecordEntity> records = dailyExpenseRecordRepository.findList(expenseDates);
-        return records;
+    private List<CategoryEntity> enrichCategoryHierarchy(List<DataCategoryVO> dataCategoryList) {
+        List<DataCategoryVO> distinctCategories = dataCategoryList.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<CategoryEntity> result = new ArrayList<>();
+
+        // 提取所有非根类目的父类目ID
+        Set<Integer> parentIds = distinctCategories.stream()
+                .map(DataCategoryVO::getParentId)
+                .filter(id -> id != 0)
+                .collect(Collectors.toSet());
+
+        // 批量查询父类目
+        if (!parentIds.isEmpty()) {
+            List<CategoryEntity> allCategories = queryCategoryRepository.findByCategoryIds(parentIds);
+            result.addAll(allCategories);
+        }
+
+        // 添加当前类目（子类目）
+        for (DataCategoryVO item : distinctCategories) {
+            CategoryEntity entity = new CategoryEntity();
+            entity.setId(item.getCategoryId());
+            entity.setCategoryName(item.getCategoryName());
+            entity.setParentId(item.getParentId());
+            entity.setList(new ArrayList<>()); // 初始化子类目列表
+            result.add(entity);
+        }
+
+        return result;
     }
 
 }
