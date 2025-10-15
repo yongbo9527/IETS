@@ -1,4 +1,4 @@
-package org.company.finance.application.command.service;
+package org.company.finance.application.query.service;
 
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;

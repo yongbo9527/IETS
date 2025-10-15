@@ -1,14 +1,14 @@
 package org.company.finance.interfaces.web;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.command.service.FinanceQueryService;
-import org.company.finance.application.query.service.FinanceCommandService;
+import org.company.finance.application.query.service.FinanceQueryService;
+import org.company.finance.application.command.service.FinanceCommandService;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.application.vo.response.DynamicTableResponse;
+import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,16 +1,16 @@
 package org.company.finance.interfaces.web;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.command.service.ReportQueryService;
+import org.company.finance.application.query.service.ReportQueryService;
 import org.company.finance.application.vo.calendar.IncomeExpenseDataVO;
 import org.company.finance.application.vo.request.ReportRequestVO;
 import org.company.finance.application.vo.response.BigCategoryExpenseResponse;
 import org.company.finance.application.vo.response.ExpenseDetailResponse;
 import org.company.finance.application.vo.response.LineEchartsResponse;
 import org.company.finance.application.vo.response.ReportDatasetResponse;
+import org.company.finance.common.util.R;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

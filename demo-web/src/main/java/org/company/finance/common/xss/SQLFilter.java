@@ -9,7 +9,7 @@
 package org.company.finance.common.xss;
 
 import org.apache.commons.lang.StringUtils;
-import org.company.finance.common.util.RRException;
+import org.company.finance.common.util.ApiException;
 
 /**
  * SQL过滤
@@ -41,7 +41,7 @@ public class SQLFilter {
         //判断是否包含非法字符
         for(String keyword : keywords){
             if(str.indexOf(keyword) != -1){
-                throw new RRException("包含非法字符");
+                throw new ApiException("包含非法字符");
             }
         }
 

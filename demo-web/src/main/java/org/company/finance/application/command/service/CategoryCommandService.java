@@ -1,4 +1,4 @@
-package org.company.finance.application.query.service;
+package org.company.finance.application.command.service;
 
 import lombok.RequiredArgsConstructor;
 import org.company.finance.domain.repository.CommandCategoryRepository;

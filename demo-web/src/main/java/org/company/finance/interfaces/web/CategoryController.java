@@ -1,13 +1,13 @@
 package org.company.finance.interfaces.web;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.command.service.CategoryQueryService;
-import org.company.finance.application.query.service.CategoryCommandService;
+import org.company.finance.application.query.service.CategoryQueryService;
+import org.company.finance.application.command.service.CategoryCommandService;
 import org.company.finance.application.vo.request.CategoryRequestVO;
+import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
