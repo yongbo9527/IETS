@@ -9,11 +9,11 @@ import org.company.finance.application.command.service.CategoryCommandService;
 import org.company.finance.application.vo.request.CategoryRequestVO;
 import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/category")
 @Api(value = "类目")
 @RequiredArgsConstructor
+@Validated
 public class CategoryController {
 
     private final CategoryQueryService queryCategoryService;
@@ -32,14 +33,14 @@ public class CategoryController {
 
     @ApiOperation(value = "分页查询类目")
     @PostMapping("/queryCategory")
-    public R<Page<CategoryEntity>> queryCategory(@RequestBody CategoryRequestVO requestVO) {
+    public R<Page<CategoryEntity>> queryCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
         Page<CategoryEntity> entityPage = queryCategoryService.queryCategory(requestVO);
         return R.ok(entityPage);
     }
 
     @ApiOperation(value = "查询所有类目")
     @PostMapping("/queryAllCategory")
-    public R<List<CategoryEntity>> queryAllCategory(@RequestBody CategoryRequestVO requestVO) {
+    public R<List<CategoryEntity>> queryAllCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
         List<CategoryEntity> entityPage = queryCategoryService.queryAllCategory(requestVO);
         return R.ok(entityPage);
     }
@@ -53,24 +54,22 @@ public class CategoryController {
 
     @ApiOperation(value = "新增类目")
     @PostMapping("/addCategory")
-    public R addCategory(@RequestBody CategoryEntity entity) {
+    public R addCategory(@Validated @RequestBody CategoryEntity entity) {
         commandCategoryService.addCategory(entity);
         return R.ok("新增成功！");
     }
 
     @ApiOperation(value = "删除类目")
     @PostMapping("/deleteCategory")
-    public R deleteCategory(Integer id) {
+    public R deleteCategory(@NotNull @Min(value = 1, message = "ID不能小于1") Integer id) {
         commandCategoryService.deleteCategory(id);
         return R.ok("删除成功！");
     }
 
     @ApiOperation(value = "修改类目")
     @PostMapping("/updateCategory")
-    public R updateCategory(@RequestBody CategoryEntity entity) {
+    public R updateCategory(@Validated @RequestBody CategoryEntity entity) {
         commandCategoryService.updateCategory(entity);
         return R.ok("修改成功！");
     }
-
-
 }

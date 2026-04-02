@@ -21,4 +21,6 @@ public interface QueryRecordRepository {
     Page<DailyExpenseRecordEntity> findPage(QueryBalanceVO vo, long current, long size);
 
     List<DailyExpenseRecordEntity> findList(List<String> expenseDates);
+
+    void saveBatch(List<DailyExpenseRecordEntity> records);
 }

@@ -2,7 +2,7 @@ package org.company.finance.application.query.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections.CollectionUtils;
+
 import org.company.finance.application.vo.TableDetailHeader;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.application.vo.balance.RecordVO;
@@ -14,6 +14,7 @@ import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

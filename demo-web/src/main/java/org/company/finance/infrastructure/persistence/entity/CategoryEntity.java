@@ -4,7 +4,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,60 +25,39 @@ public class CategoryEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 类目id，主键自增
-     */
     @TableId
+    @Min(value = 1, message = "ID不能小于1")
     private Integer id;
 
-    /**
-     * 类目名称
-     */
+    @NotBlank(message = "类目名称不能为空")
+    @Length(max = 50, message = "类目名称长度不能超过50")
     private String categoryName;
 
-    /**
-     * 类目图标
-     */
+    @Length(max = 200, message = "类目图标长度不能超过200")
     private String categoryIcon;
 
-    /**
-     * 父级类目id
-     */
+    @Min(value = 0, message = "父级类目ID不能小于0")
     private Integer parentId;
 
-    /**
-     * 消费类型，1-支出，2-收入
-     */
+    @Range(min = 1, max = 2, message = "消费类型只能是1-支出或2-收入")
     private Integer expenseType;
 
-    /**
-     * 备注
-     */
+    @Length(max = 500, message = "备注长度不能超过500")
     private String remark;
 
-    /**
-     * 创建人
-     */
+    @Length(max = 50, message = "创建人名称长度不能超过50")
     private String createName;
 
-    /**
-     * 创建时间
-     */
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$", message = "时间格式应为 yyyy-MM-dd HH:mm:ss")
     private String createTime;
 
-    /**
-     * 修改人
-     */
+    @Length(max = 50, message = "修改人名称长度不能超过50")
     private String updateName;
 
-    /**
-     * 修改时间
-     */
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$", message = "时间格式应为 yyyy-MM-dd HH:mm:ss")
     private String updateTime;
 
-    /**
-     * 删除标识
-     */
+    @Range(min = 0, max = 1, message = "删除标识只能是0或1")
     private Integer delFlag;
 
     @TableField(exist = false)

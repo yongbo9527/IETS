@@ -4,12 +4,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.company.finance.application.command.service.UserCommandService;
-import org.company.finance.application.vo.UserInfoVO;
 import org.company.finance.application.query.service.UserQueryService;
+import org.company.finance.application.vo.UserInfoVO;
 import org.company.finance.application.vo.request.SysLoginRequestVO;
 import org.company.finance.application.vo.response.LoginResponseVO;
 import org.company.finance.common.util.R;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *  @Author: Ron Yu
@@ -20,50 +25,45 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sys")
 @Api(tags = "登录接口")
 @RequiredArgsConstructor
+@Validated
 public class SysLoginController {
 
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
 
-    /**
-     * 登录
-     */
     @PostMapping("/login")
     @ApiOperation("登录")
-    public R<LoginResponseVO> login(@RequestBody SysLoginRequestVO requestVO) {
-        LoginResponseVO  login = userCommandService.login(requestVO);
+    public R<LoginResponseVO> login(@Validated @RequestBody SysLoginRequestVO requestVO, HttpServletRequest httpRequest) {
+        String clientIp = getClientIp(httpRequest);
+        LoginResponseVO login = userCommandService.login(requestVO, clientIp);
         return R.ok(login);
     }
 
-    /**
-     * 退出
-     */
-//    @PostMapping("/sys/logout")
-//    @ApiOperation("退出")
-//    public R logout(@RequestParam Long userId) {
-////        LogoutCommand command = new LogoutCommand(userId);
-//        return userCommandService.logout(command);
-//    }
+    @GetMapping("/logout")
+    @ApiOperation("退出")
+    public R logout() {
+        SecurityContextHolder.clearContext();
+        return R.ok("退出成功");
+    }
 
-    /**
-     * 查询用户信息（新增）
-     */
-//    @GetMapping("/userInfo")
-//    @ApiOperation("获取当前用户信息")
-//    public R getUserInfo(@RequestParam Long userId) {
-//        UserInfoVO userInfo = userQueryService.getUserInfo(userId);
-//        return R.ok(userInfo);
-//    }
+    @GetMapping("/userInfo")
+    @ApiOperation("获取当前用户信息")
+    public R<UserInfoVO> getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        
+        UserInfoVO userInfo = userQueryService.getUserInfo(userId);
+        return R.ok(userInfo);
+    }
 
-    /**
-     * 查询用户权限（新增）
-     */
-//    @GetMapping("/userPermissions")
-//    @ApiOperation("获取用户权限")
-//    public R getUserPermissions(@RequestParam Long userId) {
-//        UserPermissionDTO permissions = userQueryService.getUserPermissions(userId);
-//        return R.ok(permissions);
-//    }
-
-
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
 }

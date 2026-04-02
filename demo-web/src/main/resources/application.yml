@@ -7,6 +7,12 @@ spring:
     url: jdbc:mysql://localhost:3308/balance?serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+jwt:
+  secret: mySecretKeyForIETS2024
+  expire-hours: 24
+  expire-minutes: 120
+  remember-me-minutes: 10080
+
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   global-config:

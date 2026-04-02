@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.company.finance.domain.repository.QueryUserRepository;
 import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
+import org.company.finance.infrastructure.persistence.entity.SysUserInfoEntity;
 import org.company.finance.infrastructure.persistence.mapper.SysUserMapper;
+import org.company.finance.infrastructure.persistence.mapper.SysUserInfoMapper;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -18,12 +20,24 @@ public class QueryUserRepositoryImpl implements QueryUserRepository {
 
 
     private final SysUserMapper sysUserMapper;
+    private final SysUserInfoMapper sysUserInfoMapper;
 
     @Override
     public SysUserEntity findByUsername(String username) {
         LambdaQueryWrapper<SysUserEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SysUserEntity::getUsername, username);
-        SysUserEntity user = sysUserMapper.selectById(queryWrapper);
-        return null;
+        return sysUserMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public SysUserEntity findById(Long id) {
+        return sysUserMapper.selectById(id);
+    }
+
+    @Override
+    public SysUserInfoEntity findUserInfoByUserId(Long userId) {
+        LambdaQueryWrapper<SysUserInfoEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUserInfoEntity::getUserId, userId);
+        return sysUserInfoMapper.selectOne(queryWrapper);
     }
 }

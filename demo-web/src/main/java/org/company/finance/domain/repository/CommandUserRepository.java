@@ -5,14 +5,15 @@ import org.company.finance.infrastructure.persistence.entity.SysUserInfoEntity;
 
 /**
  *  @Author: Ron Yu
- *  @Create: 2025-10-17 14:34
- *  @Description:
+ *  @Create: 2025-10-29
  *
  */
-public interface QueryUserRepository {
-    SysUserEntity findByUsername(String username);
+public interface CommandUserRepository {
+    void save(SysUserEntity user);
     
-    SysUserEntity findById(Long id);
+    void update(SysUserEntity user);
     
-    SysUserInfoEntity findUserInfoByUserId(Long userId);
+    void saveUserInfo(SysUserInfoEntity userInfo);
+    
+    void updateUserInfo(SysUserInfoEntity userInfo);
 }

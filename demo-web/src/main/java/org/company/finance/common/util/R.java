@@ -47,6 +47,10 @@ public class R<T> implements Serializable {
         return restResult(null, errorCode);
     }
 
+    public static <T> R<T> failed(long code, String msg) {
+        return restResult(null, code, msg);
+    }
+
     public static <T> R<T> restResult(T data, ApiErrorCode errorCode) {
         return restResult(data, errorCode.getCode(), errorCode.getMsg());
     }

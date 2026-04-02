@@ -79,4 +79,11 @@ public class QueryRecordRepositoryImpl implements QueryRecordRepository {
                 .in(DailyExpenseRecordEntity::getExpenseDate, expenseDates);
         return mapper.selectList(wrapper);
     }
+
+    @Override
+    public void saveBatch(List<DailyExpenseRecordEntity> records) {
+        for (DailyExpenseRecordEntity record : records) {
+            mapper.insert(record);
+        }
+    }
 }

@@ -1,7 +1,15 @@
 package org.company.finance.interfaces.web;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.company.finance.application.command.service.UserCommandService;
+import org.company.finance.application.vo.request.RegisterRequestVO;
+import org.company.finance.common.util.R;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *  @Author: Ron Yu
@@ -10,7 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户接口")
+@RequiredArgsConstructor
+@Validated
 public class SysUserController {
 
+    private final UserCommandService userCommandService;
 
+    @PostMapping("/register")
+    @ApiOperation("用户注册")
+    public R register(@Validated @RequestBody RegisterRequestVO requestVO) {
+        userCommandService.register(requestVO);
+        return R.ok("注册成功");
+    }
+
+    @PostMapping("/deactivate")
+    @ApiOperation("账号注销")
+    public R deactivate() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        
+        userCommandService.deactivate(userId);
+        SecurityContextHolder.clearContext();
+        return R.ok("注销成功");
+    }
 }

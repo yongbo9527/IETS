@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -20,66 +22,45 @@ import java.util.Date;
 public class DailyExpenseRecordEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键id
-     */
     @TableId
+    @Min(value = 1, message = "ID不能小于1")
     private Integer id;
 
-    /**
-     * 类目ID，关联base_tally_category表
-     */
+    @NotNull(message = "类目ID不能为空")
+    @Min(value = 1, message = "类目ID不能小于1")
     private Integer categoryId;
 
     @TableField(exist = false)
     private String categoryName;
 
-    /**
-     * 消费金额
-     */
+    @NotNull(message = "消费金额不能为空")
+    @DecimalMin(value = "0.01", message = "消费金额必须大于0")
+    @Digits(integer = 10, fraction = 2, message = "消费金额格式不正确")
     private BigDecimal expenseAmount;
 
-    /**
-     * 消费日期
-     */
+    @NotBlank(message = "消费日期不能为空")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "日期格式应为 yyyy-MM-dd")
     private String expenseDate;
 
-    /**
-     * 消费类型，1-支出，2-收入
-     */
+    @NotNull(message = "消费类型不能为空")
+    @Range(min = 1, max = 2, message = "消费类型只能是1-支出或2-收入")
     private Integer expenseType;
 
-    /**
-     * 备注
-     */
+    @Size(max = 500, message = "备注长度不能超过500")
     private String remark;
 
-    /**
-     * 创建者
-     */
+    @Size(max = 50, message = "创建者名称长度不能超过50")
     private String createName;
 
-    /**
-     * 创建时间
-     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
-    /**
-     * 更新者
-     */
+    @Size(max = 50, message = "更新者名称长度不能超过50")
     private String updateName;
 
-    /**
-     * 更新时间
-     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
-    /**
-     * 删除标记，0-未删除，1-已删除
-     */
+    @Range(min = 0, max = 1, message = "删除标记只能是0或1")
     private Integer delFlag;
-
-
 }

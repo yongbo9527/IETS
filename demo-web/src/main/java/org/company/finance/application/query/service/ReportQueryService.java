@@ -2,7 +2,6 @@ package org.company.finance.application.query.service;
 
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.company.finance.application.vo.calendar.IncomeExpenseDataVO;
 import org.company.finance.application.vo.report.ReportDatasetVO;
@@ -11,6 +10,7 @@ import org.company.finance.application.vo.response.*;
 import org.company.finance.common.util.DateUtils;
 import org.company.finance.domain.repository.QueryReportRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.math.BigDecimal;
