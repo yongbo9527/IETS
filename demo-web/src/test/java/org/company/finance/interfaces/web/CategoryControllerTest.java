@@ -249,7 +249,8 @@ class CategoryControllerTest {
                         .content(jsonContent))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.msg").value("新增成功！"));
+                .andExpect(jsonPath("$.msg").value("执行成功"))
+                .andExpect(jsonPath("$.data").value("新增成功！"));
 
         verify(commandCategoryService, times(1)).addCategory(any(CategoryEntity.class));
     }
@@ -263,7 +264,8 @@ class CategoryControllerTest {
                         .param("id", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.msg").value("删除成功！"));
+                .andExpect(jsonPath("$.msg").value("执行成功"))
+                .andExpect(jsonPath("$.data").value("删除成功！"));
 
         verify(commandCategoryService, times(1)).deleteCategory(eq(1));
     }
@@ -287,7 +289,8 @@ class CategoryControllerTest {
                         .content(jsonContent))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.msg").value("修改成功！"));
+                .andExpect(jsonPath("$.msg").value("执行成功"))
+                .andExpect(jsonPath("$.data").value("修改成功！"));
 
         verify(commandCategoryService, times(1)).updateCategory(any(CategoryEntity.class));
     }
