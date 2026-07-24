@@ -1,6 +1,5 @@
 package org.company.finance.infrastructure.persistence.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -11,8 +10,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *  @Author: Ron Yu
@@ -59,8 +56,5 @@ public class CategoryEntity implements Serializable {
 
     @Range(min = 0, max = 1, message = "删除标识只能是0或1")
     private Integer delFlag;
-
-    @TableField(exist = false)
-    private List<CategoryEntity> list = new ArrayList<>();
 
 }

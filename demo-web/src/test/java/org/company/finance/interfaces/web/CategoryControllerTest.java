@@ -7,6 +7,8 @@ import org.company.finance.application.query.service.CategoryQueryService;
 import org.company.finance.application.vo.request.CreateCategoryRequest;
 import org.company.finance.application.vo.request.CategoryRequestVO;
 import org.company.finance.application.vo.request.UpdateCategoryRequest;
+import org.company.finance.application.vo.response.CategoryResponse;
+import org.company.finance.application.vo.response.CategoryTreeNodeResponse;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +77,6 @@ class CategoryControllerTest {
         parentCategory.setUpdateName("admin");
         parentCategory.setUpdateTime("2025-01-01 10:00:00");
         parentCategory.setDelFlag(0);
-        parentCategory.setList(new ArrayList<>()); // 初始化空列表
 
         // 初始化子类目
         childCategory = new CategoryEntity();
@@ -90,7 +91,6 @@ class CategoryControllerTest {
         childCategory.setUpdateName("admin");
         childCategory.setUpdateTime("2025-01-02 11:00:00");
         childCategory.setDelFlag(0);
-        childCategory.setList(new ArrayList<>());
 
         // 请求 VO
         requestVO = new CategoryRequestVO();
@@ -102,8 +102,8 @@ class CategoryControllerTest {
     // ========== 分页查询类目 ==========
     @Test
     void testQueryCategory() throws Exception {
-        Page<CategoryEntity> page = new Page<>(1, 10);
-        page.setRecords(Arrays.asList(childCategory));
+        Page<CategoryResponse> page = new Page<>(1, 10);
+        page.setRecords(Arrays.asList(toCategoryResponse(childCategory)));
         page.setTotal(1);
 
         when(queryCategoryService.queryCategory(any(CategoryRequestVO.class))).thenReturn(page);
@@ -136,7 +136,7 @@ class CategoryControllerTest {
         // 不真正执行业务逻辑，而是“伪造”返回两个预设的分类对象（parentCategory 和 childCategory）
         // 这样可以隔离外部依赖（如数据库），确保测试只关注 Controller 本身的逻辑
         when(queryCategoryService.queryAllCategory(any(CategoryRequestVO.class)))
-                .thenReturn(Arrays.asList(parentCategory, childCategory));
+                .thenReturn(Arrays.asList(toCategoryResponse(parentCategory), toCategoryResponse(childCategory)));
 
         // ========================================================================
         // 2. Act & Assert（执行与断言阶段）：发起请求并验证响应
@@ -163,7 +163,7 @@ class CategoryControllerTest {
 
                 // 验证响应 JSON 中的 "code" 字段是否等于 0
                 // 表示业务处理成功（根据 R<T> 统一封装的设计）
-                .andExpect(jsonPath("$.code").value(0))
+                .andExpect(jsonPath("$.code").value(200))
 
                 // 验证响应 JSON 中的 "msg" 字段是否为 "执行成功"
                 // 与 ApiErrorCode.SUCCESS.msg 保持一致，确保提示信息正确
@@ -202,17 +202,18 @@ class CategoryControllerTest {
     void testQueryTreeCategoryList() throws Exception {
         // 构造树形结构：parent -> child
         childCategory.setParentId(1);
-        parentCategory.setList(Collections.singletonList(childCategory));
+        CategoryTreeNodeResponse treeNodeResponse = toTreeNodeResponse(parentCategory);
+        treeNodeResponse.setChildren(Collections.singletonList(toTreeNodeResponse(childCategory)));
 
         when(queryCategoryService.queryTreeCategoryList())
-                .thenReturn(Collections.singletonList(parentCategory));
+                .thenReturn(Collections.singletonList(treeNodeResponse));
 
         mockMvc.perform(post("/category/queryTreeCategoryList"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data[0].categoryName").value("电子产品"))
-                .andExpect(jsonPath("$.data[0].list[0].categoryName").value("手机"))
-                .andExpect(jsonPath("$.data[0].list[0].parentId").value(1));
+                .andExpect(jsonPath("$.data[0].children[0].categoryName").value("手机"))
+                .andExpect(jsonPath("$.data[0].children[0].parentId").value(1));
 
         verify(queryCategoryService, times(1)).queryTreeCategoryList();
     }
@@ -279,5 +280,27 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.data").value("修改成功！"));
 
         verify(commandCategoryService, times(1)).updateCategory(any(UpdateCategoryRequest.class));
+    }
+
+    private CategoryResponse toCategoryResponse(CategoryEntity entity) {
+        CategoryResponse response = new CategoryResponse();
+        response.setId(entity.getId());
+        response.setCategoryName(entity.getCategoryName());
+        response.setCategoryIcon(entity.getCategoryIcon());
+        response.setParentId(entity.getParentId());
+        response.setExpenseType(entity.getExpenseType());
+        response.setRemark(entity.getRemark());
+        return response;
+    }
+
+    private CategoryTreeNodeResponse toTreeNodeResponse(CategoryEntity entity) {
+        CategoryTreeNodeResponse response = new CategoryTreeNodeResponse();
+        response.setId(entity.getId());
+        response.setCategoryName(entity.getCategoryName());
+        response.setCategoryIcon(entity.getCategoryIcon());
+        response.setParentId(entity.getParentId());
+        response.setExpenseType(entity.getExpenseType());
+        response.setRemark(entity.getRemark());
+        return response;
     }
 }

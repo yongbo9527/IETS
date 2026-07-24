@@ -8,6 +8,7 @@ import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.application.vo.balance.RecordVO;
 import org.company.finance.application.vo.category.DataCategoryVO;
 import org.company.finance.application.vo.response.DynamicTableResponse;
+import org.company.finance.application.vo.response.ExpenseRecordResponse;
 import org.company.finance.domain.repository.QueryCategoryRepository;
 import org.company.finance.domain.repository.QueryRecordRepository;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
@@ -31,9 +32,14 @@ public class FinanceQueryService {
     private final QueryRecordRepository queryRecordRepository;
 
     private final QueryCategoryRepository queryCategoryRepository;
-    public Page<DailyExpenseRecordEntity> listDailyRecords(QueryBalanceVO vo) {
+    public Page<ExpenseRecordResponse> listDailyRecords(QueryBalanceVO vo) {
         Page<DailyExpenseRecordEntity> expenseRecordEntityPage = queryRecordRepository.findByUserIdAndDateRange(null, vo);
-        return expenseRecordEntityPage;
+        Page<ExpenseRecordResponse> responsePage = new Page<>(expenseRecordEntityPage.getCurrent(), expenseRecordEntityPage.getSize());
+        responsePage.setTotal(expenseRecordEntityPage.getTotal());
+        responsePage.setRecords(expenseRecordEntityPage.getRecords().stream()
+                .map(this::toExpenseRecordResponse)
+                .collect(Collectors.toList()));
+        return responsePage;
     }
 
     @Transactional(readOnly = true)
@@ -83,12 +89,12 @@ public class FinanceQueryService {
         // 查询涉及的数据类目
         List<DataCategoryVO> dataCategoryList = queryCategoryRepository.findDataCategory(vo);
         if (CollectionUtils.isEmpty(dataCategoryList)) {
-            return headers; // 无类目时只保留“日期”列
+            return headers;
         }
 
         // 去重并补全父类目信息
-        List<CategoryEntity> allCategories = enrichCategoryHierarchy(dataCategoryList);
-        List<CategoryEntity> tree = buildCategoryTree(allCategories);
+        List<CategoryNode> allCategories = enrichCategoryHierarchy(dataCategoryList);
+        List<CategoryNode> tree = buildCategoryTree(allCategories);
 
         // 转换为前端所需的表头结构
         buildHeader(headers, tree);
@@ -98,24 +104,24 @@ public class FinanceQueryService {
     /**
      * 将类目树转换为 TableDetailHeader 结构
      */
-    private void buildHeader(LinkedList<TableDetailHeader> headers, List<CategoryEntity> tree) {
-        for (CategoryEntity parent : tree) {
-            List<CategoryEntity> children = parent.getList();
+    private void buildHeader(LinkedList<TableDetailHeader> headers, List<CategoryNode> tree) {
+        for (CategoryNode parent : tree) {
+            List<CategoryNode> children = parent.children;
             LinkedList<TableDetailHeader> childHeaders = new LinkedList<>();
 
             if (!children.isEmpty()) {
-                for (CategoryEntity child : children) {
+                for (CategoryNode child : children) {
                     childHeaders.add(new TableDetailHeader(
-                            child.getId().toString(),
-                            child.getCategoryName(),
+                            child.id.toString(),
+                            child.categoryName,
                             null
                     ));
                 }
             }
 
             TableDetailHeader parentHeader = new TableDetailHeader(
-                    parent.getId().toString(),
-                    parent.getCategoryName(),
+                    parent.id.toString(),
+                    parent.categoryName,
                     childHeaders.isEmpty() ? null : childHeaders
             );
             headers.add(parentHeader);
@@ -126,25 +132,25 @@ public class FinanceQueryService {
     /**
      * 构建类目树结构（父 -> 子）
      */
-    private List<CategoryEntity> buildCategoryTree(List<CategoryEntity> categories) {
-        Map<Integer, CategoryEntity> map = new HashMap<>();
-        List<CategoryEntity> parents = new ArrayList<>();
+    private List<CategoryNode> buildCategoryTree(List<CategoryNode> categories) {
+        Map<Integer, CategoryNode> map = new HashMap<>();
+        List<CategoryNode> parents = new ArrayList<>();
 
         // 构建 ID -> Entity 映射
-        for (CategoryEntity category : categories) {
-            map.put(category.getId(), category);
-            category.setList(new ArrayList<>()); // 确保 list 已初始化
+        for (CategoryNode category : categories) {
+            map.put(category.id, category);
+            category.children = new ArrayList<>();
         }
 
         // 构建父子关系
-        for (CategoryEntity category : categories) {
-            Integer parentId = category.getParentId();
+        for (CategoryNode category : categories) {
+            Integer parentId = category.parentId;
             if (parentId == 0) {
-                parents.add(category); // 根节点
+                parents.add(category);
             } else {
-                CategoryEntity parent = map.get(parentId);
+                CategoryNode parent = map.get(parentId);
                 if (parent != null) {
-                    parent.getList().add(category);
+                    parent.children.add(category);
                 }
             }
         }
@@ -283,12 +289,12 @@ public class FinanceQueryService {
     /**
      * 补全类目层级信息：将父类目从数据库加载，并合并子类目
      */
-    private List<CategoryEntity> enrichCategoryHierarchy(List<DataCategoryVO> dataCategoryList) {
+    private List<CategoryNode> enrichCategoryHierarchy(List<DataCategoryVO> dataCategoryList) {
         List<DataCategoryVO> distinctCategories = dataCategoryList.stream()
                 .distinct()
                 .collect(Collectors.toList());
 
-        List<CategoryEntity> result = new ArrayList<>();
+        List<CategoryNode> result = new ArrayList<>();
 
         // 提取所有非根类目的父类目ID
         Set<Integer> parentIds = distinctCategories.stream()
@@ -298,21 +304,49 @@ public class FinanceQueryService {
 
         // 批量查询父类目
         if (!parentIds.isEmpty()) {
-            List<CategoryEntity> allCategories = queryCategoryRepository.findByCategoryIds(parentIds);
+            List<CategoryNode> allCategories = queryCategoryRepository.findByCategoryIds(parentIds).stream()
+                    .map(this::toCategoryNode)
+                    .collect(Collectors.toList());
             result.addAll(allCategories);
         }
 
         // 添加当前类目（子类目）
         for (DataCategoryVO item : distinctCategories) {
-            CategoryEntity entity = new CategoryEntity();
-            entity.setId(item.getCategoryId());
-            entity.setCategoryName(item.getCategoryName());
-            entity.setParentId(item.getParentId());
-            entity.setList(new ArrayList<>()); // 初始化子类目列表
-            result.add(entity);
+            result.add(new CategoryNode(item.getCategoryId(), item.getCategoryName(), item.getParentId()));
         }
 
         return result;
+    }
+
+    private CategoryNode toCategoryNode(CategoryEntity entity) {
+        return new CategoryNode(entity.getId(), entity.getCategoryName(), entity.getParentId());
+    }
+
+    private ExpenseRecordResponse toExpenseRecordResponse(DailyExpenseRecordEntity entity) {
+        ExpenseRecordResponse response = new ExpenseRecordResponse();
+        response.setId(entity.getId());
+        response.setCategoryId(entity.getCategoryId());
+        response.setCategoryName(entity.getCategoryName());
+        response.setExpenseAmount(entity.getExpenseAmount());
+        response.setExpenseDate(entity.getExpenseDate());
+        response.setExpenseType(entity.getExpenseType());
+        response.setRemark(entity.getRemark());
+        response.setCreateTime(entity.getCreateTime());
+        response.setUpdateTime(entity.getUpdateTime());
+        return response;
+    }
+
+    private static final class CategoryNode {
+        private final Integer id;
+        private final String categoryName;
+        private final Integer parentId;
+        private List<CategoryNode> children = new ArrayList<>();
+
+        private CategoryNode(Integer id, String categoryName, Integer parentId) {
+            this.id = id;
+            this.categoryName = categoryName;
+            this.parentId = parentId;
+        }
     }
 
 }

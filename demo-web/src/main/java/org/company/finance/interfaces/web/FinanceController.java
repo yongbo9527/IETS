@@ -12,8 +12,8 @@ import org.company.finance.application.vo.request.CreateExpenseRecordRequest;
 import org.company.finance.application.vo.request.ImportExportRequestVO;
 import org.company.finance.application.vo.request.UpdateExpenseRecordRequest;
 import org.company.finance.application.vo.response.DynamicTableResponse;
+import org.company.finance.application.vo.response.ExpenseRecordResponse;
 import org.company.finance.common.util.R;
-import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +39,7 @@ public class FinanceController {
 
     @ApiOperation(value = "直接查询收支数据")
     @PostMapping("/listDailyRecords")
-    public R<Page<DailyExpenseRecordEntity>> listDailyRecords(@Validated @RequestBody QueryBalanceVO vo) {
+    public R<Page<ExpenseRecordResponse>> listDailyRecords(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.listDailyRecords(vo));
     }
 

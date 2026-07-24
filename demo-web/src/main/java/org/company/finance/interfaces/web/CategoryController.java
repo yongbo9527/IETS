@@ -9,8 +9,9 @@ import org.company.finance.application.command.service.CategoryCommandService;
 import org.company.finance.application.vo.request.CreateCategoryRequest;
 import org.company.finance.application.vo.request.CategoryRequestVO;
 import org.company.finance.application.vo.request.UpdateCategoryRequest;
+import org.company.finance.application.vo.response.CategoryResponse;
+import org.company.finance.application.vo.response.CategoryTreeNodeResponse;
 import org.company.finance.common.util.R;
-import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,22 +36,22 @@ public class CategoryController {
 
     @ApiOperation(value = "分页查询类目")
     @PostMapping("/queryCategory")
-    public R<Page<CategoryEntity>> queryCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
-        Page<CategoryEntity> entityPage = queryCategoryService.queryCategory(requestVO);
+    public R<Page<CategoryResponse>> queryCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
+        Page<CategoryResponse> entityPage = queryCategoryService.queryCategory(requestVO);
         return R.ok(entityPage);
     }
 
     @ApiOperation(value = "查询所有类目")
     @PostMapping("/queryAllCategory")
-    public R<List<CategoryEntity>> queryAllCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
-        List<CategoryEntity> entityPage = queryCategoryService.queryAllCategory(requestVO);
+    public R<List<CategoryResponse>> queryAllCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
+        List<CategoryResponse> entityPage = queryCategoryService.queryAllCategory(requestVO);
         return R.ok(entityPage);
     }
 
     @ApiOperation(value = "查询树形类目结构")
     @PostMapping("/queryTreeCategoryList")
-    public R<List<CategoryEntity>> queryTreeCategoryList() {
-        List<CategoryEntity> list = queryCategoryService.queryTreeCategoryList();
+    public R<List<CategoryTreeNodeResponse>> queryTreeCategoryList() {
+        List<CategoryTreeNodeResponse> list = queryCategoryService.queryTreeCategoryList();
         return R.ok(list);
     }
 
