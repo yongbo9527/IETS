@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.oneself.balance</groupId>
-        <artifactId>demo</artifactId>
+        <artifactId>IETS</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
