@@ -3,38 +3,24 @@ package org.company.finance.interfaces.web;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.company.finance.application.command.service.CategoryCommandService;
-import org.company.finance.application.command.service.FinanceCommandService;
 import org.company.finance.application.query.service.CategoryQueryService;
+import org.company.finance.application.vo.request.CreateCategoryRequest;
 import org.company.finance.application.vo.request.CategoryRequestVO;
+import org.company.finance.application.vo.request.UpdateCategoryRequest;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
-import org.company.finance.test.MapperExclusionFilter;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -234,7 +220,7 @@ class CategoryControllerTest {
     // ========== 新增类目 ==========
     @Test
     void testAddCategory() throws Exception {
-        doNothing().when(commandCategoryService).addCategory(any(CategoryEntity.class));
+        doNothing().when(commandCategoryService).addCategory(any(CreateCategoryRequest.class));
 
         String jsonContent = "{"
                 + "\"categoryName\": \"新服饰\","
@@ -252,7 +238,7 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.msg").value("执行成功"))
                 .andExpect(jsonPath("$.data").value("新增成功！"));
 
-        verify(commandCategoryService, times(1)).addCategory(any(CategoryEntity.class));
+        verify(commandCategoryService, times(1)).addCategory(any(CreateCategoryRequest.class));
     }
 
     // ========== 删除类目 ==========
@@ -273,7 +259,7 @@ class CategoryControllerTest {
     // ========== 修改类目 ==========
     @Test
     void testUpdateCategory() throws Exception {
-        doNothing().when(commandCategoryService).updateCategory(any(CategoryEntity.class));
+        doNothing().when(commandCategoryService).updateCategory(any(UpdateCategoryRequest.class));
 
         String jsonContent = "{"
                 + "\"id\": 2,"
@@ -292,6 +278,6 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.msg").value("执行成功"))
                 .andExpect(jsonPath("$.data").value("修改成功！"));
 
-        verify(commandCategoryService, times(1)).updateCategory(any(CategoryEntity.class));
+        verify(commandCategoryService, times(1)).updateCategory(any(UpdateCategoryRequest.class));
     }
 }

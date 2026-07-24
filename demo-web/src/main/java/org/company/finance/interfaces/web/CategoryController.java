@@ -6,7 +6,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.company.finance.application.query.service.CategoryQueryService;
 import org.company.finance.application.command.service.CategoryCommandService;
+import org.company.finance.application.vo.request.CreateCategoryRequest;
 import org.company.finance.application.vo.request.CategoryRequestVO;
+import org.company.finance.application.vo.request.UpdateCategoryRequest;
 import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 import org.springframework.validation.annotation.Validated;
@@ -54,8 +56,8 @@ public class CategoryController {
 
     @ApiOperation(value = "新增类目")
     @PostMapping("/addCategory")
-    public R addCategory(@Validated @RequestBody CategoryEntity entity) {
-        commandCategoryService.addCategory(entity);
+    public R addCategory(@Validated @RequestBody CreateCategoryRequest request) {
+        commandCategoryService.addCategory(request);
         return R.ok("新增成功！");
     }
 
@@ -68,8 +70,8 @@ public class CategoryController {
 
     @ApiOperation(value = "修改类目")
     @PostMapping("/updateCategory")
-    public R updateCategory(@Validated @RequestBody CategoryEntity entity) {
-        commandCategoryService.updateCategory(entity);
+    public R updateCategory(@Validated @RequestBody UpdateCategoryRequest request) {
+        commandCategoryService.updateCategory(request);
         return R.ok("修改成功！");
     }
 }

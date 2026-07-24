@@ -3,7 +3,7 @@ package org.company.finance.infrastructure.persistence.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
-import org.company.finance.application.vo.catagory.DataCategoryVO;
+import org.company.finance.application.vo.category.DataCategoryVO;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 
 import java.util.List;

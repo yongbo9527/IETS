@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
-import org.company.finance.application.vo.catagory.DataCategoryVO;
+import org.company.finance.application.vo.category.DataCategoryVO;
 import org.company.finance.application.vo.request.CategoryRequestVO;
 import org.company.finance.domain.repository.QueryCategoryRepository;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
@@ -26,6 +26,11 @@ import java.util.Set;
 public class QueryCategoryRepositoryImpl implements QueryCategoryRepository {
 
     private final CategoryMapper categoryMapper;
+
+    @Override
+    public CategoryEntity findById(Integer id) {
+        return categoryMapper.selectById(id);
+    }
 
     @Override
     public List<CategoryEntity> findActiveOrderByAsc() {

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.company.finance.application.vo.TableDetailHeader;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.application.vo.balance.RecordVO;
-import org.company.finance.application.vo.catagory.DataCategoryVO;
+import org.company.finance.application.vo.category.DataCategoryVO;
 import org.company.finance.application.vo.response.DynamicTableResponse;
 import org.company.finance.domain.repository.QueryCategoryRepository;
 import org.company.finance.domain.repository.QueryRecordRepository;

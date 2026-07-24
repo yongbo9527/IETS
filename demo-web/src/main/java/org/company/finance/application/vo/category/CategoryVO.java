@@ -1,4 +1,4 @@
-package org.company.finance.application.vo.catagory;
+package org.company.finance.application.vo.category;
 
 import lombok.Data;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;

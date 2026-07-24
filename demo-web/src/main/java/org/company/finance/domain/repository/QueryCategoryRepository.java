@@ -2,7 +2,7 @@ package org.company.finance.domain.repository;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
-import org.company.finance.application.vo.catagory.DataCategoryVO;
+import org.company.finance.application.vo.category.DataCategoryVO;
 import org.company.finance.application.vo.request.CategoryRequestVO;
 import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
 
@@ -15,6 +15,8 @@ import java.util.Set;
  *
  */
 public interface QueryCategoryRepository {
+    CategoryEntity findById(Integer id);
+
     List<CategoryEntity> findActiveOrderByAsc();
 
     List<DataCategoryVO> findDataCategory(QueryBalanceVO vo);

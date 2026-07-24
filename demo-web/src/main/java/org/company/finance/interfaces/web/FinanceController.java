@@ -8,7 +8,9 @@ import org.company.finance.application.query.service.FinanceQueryService;
 import org.company.finance.application.command.service.FinanceCommandService;
 import org.company.finance.application.service.ImportExportService;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
+import org.company.finance.application.vo.request.CreateExpenseRecordRequest;
 import org.company.finance.application.vo.request.ImportExportRequestVO;
+import org.company.finance.application.vo.request.UpdateExpenseRecordRequest;
 import org.company.finance.application.vo.response.DynamicTableResponse;
 import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordEntity;
@@ -44,15 +46,15 @@ public class FinanceController {
 
     @ApiOperation(value = "新增收支记录")
     @PutMapping("/saveRecord")
-    public R saveRecord(@Validated @RequestBody DailyExpenseRecordEntity entity) {
-        commandService.saveRecord(entity);
+    public R saveRecord(@Validated @RequestBody CreateExpenseRecordRequest request) {
+        commandService.saveRecord(request);
         return R.ok("新增成功");
     }
 
     @ApiOperation(value = "修改收支记录")
     @PutMapping("/updateRecord")
-    public R updateRecord(@Validated @RequestBody DailyExpenseRecordEntity entity) {
-        commandService.updateRecord(entity);
+    public R updateRecord(@Validated @RequestBody UpdateExpenseRecordRequest request) {
+        commandService.updateRecord(request);
         return R.ok("修改成功");
     }
 

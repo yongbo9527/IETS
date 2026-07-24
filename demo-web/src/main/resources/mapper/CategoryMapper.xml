@@ -4,7 +4,7 @@
 <mapper namespace="org.company.finance.infrastructure.persistence.mapper.CategoryMapper">
 
 
-    <select id="selectDataCategory" resultType="org.company.finance.application.vo.catagory.DataCategoryVO">
+    <select id="selectDataCategory" resultType="org.company.finance.application.vo.category.DataCategoryVO">
         SELECT
             record.category_id,
             category.category_name,
