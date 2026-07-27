@@ -22,7 +22,7 @@ public class CategoryCommandService {
     public void addCategory(CreateCategoryRequest request) {
         Category.restore(null, request.getCategoryName(), normalizeParentId(request.getParentId()),
                 ExpenseType.ofCode(request.getExpenseType()), false);
-        commandCategoryRepository.addCategory(toEntity(request));
+        commandCategoryRepository.save(toEntity(request));
     }
 
     public void deleteCategory(Integer id) {
@@ -32,7 +32,7 @@ public class CategoryCommandService {
     public void updateCategory(UpdateCategoryRequest request) {
         Category.restore(request.getId(), request.getCategoryName(), normalizeParentId(request.getParentId()),
                 ExpenseType.ofCode(request.getExpenseType()), false);
-        commandCategoryRepository.updateCategory(toEntity(request));
+        commandCategoryRepository.update(toEntity(request));
     }
 
     private Integer normalizeParentId(Integer parentId) {

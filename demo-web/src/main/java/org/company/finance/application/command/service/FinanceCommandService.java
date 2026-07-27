@@ -59,7 +59,7 @@ public class FinanceCommandService {
                 Remark.of(request.getRemark())
         );
 
-        commandRecordRepository.updateRecord(toEntity(request));
+        commandRecordRepository.update(toEntity(request));
     }
 
     public void deleteRecord(Long id) {

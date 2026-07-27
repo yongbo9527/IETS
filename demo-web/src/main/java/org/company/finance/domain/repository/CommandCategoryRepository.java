@@ -8,9 +8,9 @@ import org.company.finance.infrastructure.persistence.entity.CategoryEntity;
  *
  */
 public interface CommandCategoryRepository {
-    void addCategory(CategoryEntity entity);
+    void save(CategoryEntity entity);
 
     void updateById(Integer id);
 
-    void updateCategory(CategoryEntity entity);
+    void update(CategoryEntity entity);
 }

@@ -10,7 +10,7 @@ import org.company.finance.infrastructure.persistence.entity.DailyExpenseRecordE
 public interface CommandRecordRepository {
     void save(DailyExpenseRecordEntity entity);
 
-    void updateRecord(DailyExpenseRecordEntity entity);
+    void update(DailyExpenseRecordEntity entity);
 
     void deleteById(Long id);
 }

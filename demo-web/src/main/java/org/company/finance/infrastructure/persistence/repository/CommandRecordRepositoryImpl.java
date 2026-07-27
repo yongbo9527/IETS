@@ -23,7 +23,7 @@ public class CommandRecordRepositoryImpl implements CommandRecordRepository {
     }
 
     @Override
-    public void updateRecord(DailyExpenseRecordEntity entity) {
+    public void update(DailyExpenseRecordEntity entity) {
         LambdaUpdateWrapper<DailyExpenseRecordEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(DailyExpenseRecordEntity::getExpenseAmount, entity.getExpenseAmount())
                 .set(DailyExpenseRecordEntity::getRemark, entity.getRemark())

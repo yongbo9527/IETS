@@ -19,7 +19,7 @@ public class CommandCategoryRepositoryImpl implements CommandCategoryRepository 
     private final CategoryMapper categoryMapper;
 
     @Override
-    public void addCategory(CategoryEntity entity) {
+    public void save(CategoryEntity entity) {
         categoryMapper.insert(entity);
     }
 
@@ -31,7 +31,7 @@ public class CommandCategoryRepositoryImpl implements CommandCategoryRepository 
     }
 
     @Override
-    public void updateCategory(CategoryEntity entity) {
+    public void update(CategoryEntity entity) {
         LambdaUpdateWrapper<CategoryEntity> updatedWrapper =  new LambdaUpdateWrapper<CategoryEntity>().eq(CategoryEntity::getId, entity.getId());
         categoryMapper.update(entity, updatedWrapper);
     }
