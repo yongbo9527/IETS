@@ -1,4 +1,4 @@
-package org.company.finance.application.vo.request;
+package org.company.finance.report.interfaces.rest.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package org.company.finance.application.vo.response;
+package org.company.finance.report.application.query.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -11,8 +11,8 @@ import java.math.BigDecimal;
  *
  */
 @Data
-@Schema(description = "日历支出收入数据返回")
-public class ReportDataResponse {
+@Schema(description = "报表查询结果")
+public class ReportDataQueryModel {
 
     @Schema(description = "日期")
     private String date;

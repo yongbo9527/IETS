@@ -1,4 +1,4 @@
-package org.company.finance.application.vo.report;
+package org.company.finance.report.application.query.model;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  *
  */
 @Data
-public class ReportDatasetVO {
+public class ReportDatasetQueryModel {
 
     private Integer categoryId;
 
@@ -23,8 +23,4 @@ public class ReportDatasetVO {
     private BigDecimal expenseAmount;
 
     private String dailyDate;
-
-
-
-//    private LinkedMultiValueMap<String, String> datasetMap;
 }
