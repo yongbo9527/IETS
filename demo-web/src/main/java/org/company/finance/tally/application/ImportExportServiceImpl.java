@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.category.domain.model.Category;
 import org.company.finance.tally.application.query.model.ExpenseRecordQueryModel;
 import org.company.finance.tally.domain.model.ExpenseDate;
@@ -16,6 +15,7 @@ import org.company.finance.tally.domain.model.Remark;
 import org.company.finance.tally.domain.repository.CommandRecordRepository;
 import org.company.finance.tally.domain.repository.QueryRecordRepository;
 import org.company.finance.tally.interfaces.rest.request.ImportExportRequestVO;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

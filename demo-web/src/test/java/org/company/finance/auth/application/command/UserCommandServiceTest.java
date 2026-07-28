@@ -2,12 +2,12 @@ package org.company.finance.auth.application.command;
 
 import org.company.finance.auth.interfaces.rest.request.SysLoginRequestVO;
 import org.company.finance.auth.interfaces.rest.response.LoginResponseVO;
-import org.company.finance.domain.repository.CommandUserRepository;
-import org.company.finance.domain.repository.QueryCaptchaRepository;
-import org.company.finance.domain.repository.QueryUserRepository;
-import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
-import org.company.finance.infrastructure.persistence.entity.SysUserTokenEntity;
-import org.company.finance.infrastructure.persistence.mapper.SysUserTokenMapper;
+import org.company.finance.auth.domain.repository.CommandUserRepository;
+import org.company.finance.auth.domain.repository.QueryCaptchaRepository;
+import org.company.finance.auth.domain.repository.QueryUserRepository;
+import org.company.finance.auth.infrastructure.persistence.entity.SysUserEntity;
+import org.company.finance.auth.infrastructure.persistence.entity.SysUserTokenEntity;
+import org.company.finance.auth.infrastructure.persistence.mapper.SysUserTokenMapper;
 import org.company.finance.common.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

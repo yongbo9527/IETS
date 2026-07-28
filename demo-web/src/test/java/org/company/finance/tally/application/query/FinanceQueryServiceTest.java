@@ -1,10 +1,10 @@
 package org.company.finance.tally.application.query;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.category.domain.repository.QueryCategoryRepository;
 import org.company.finance.tally.application.query.model.ExpenseRecordQueryModel;
 import org.company.finance.tally.domain.repository.QueryRecordRepository;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 import org.company.finance.tally.interfaces.rest.response.ExpenseRecordResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

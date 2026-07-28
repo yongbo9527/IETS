@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan({
-        "org.company.finance.infrastructure.persistence.mapper",
+        "org.company.finance.auth.infrastructure.persistence.mapper",
         "org.company.finance.report.infrastructure.persistence",
         "org.company.finance.tally.infrastructure.persistence",
         "org.company.finance.category.infrastructure.persistence"

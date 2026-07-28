@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
-import org.company.finance.tally.infrastructure.persistence.ExpenseRecordDO;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 
 /**
  *  @Author: Ron Yu
@@ -21,5 +20,5 @@ public interface ExpenseRecordMapper extends BaseMapper<ExpenseRecordDO> {
      * @param queryBalanceVO
      * @return
      */
-    Page<ExpenseRecordDO> selectExpenseMetaData(@Param("page") Page<QueryBalanceVO> vo, @Param("vo")  QueryBalanceVO queryBalanceVO);
+    Page<ExpenseRecordDO> selectExpenseMetaData(@Param("page") Page<QueryBalanceVO> vo, @Param("vo") QueryBalanceVO queryBalanceVO);
 }

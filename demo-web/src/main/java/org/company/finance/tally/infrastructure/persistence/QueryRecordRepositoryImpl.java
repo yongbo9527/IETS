@@ -3,9 +3,9 @@ package org.company.finance.tally.infrastructure.persistence;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.tally.application.query.model.ExpenseRecordQueryModel;
 import org.company.finance.tally.domain.repository.QueryRecordRepository;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;

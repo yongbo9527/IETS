@@ -1,8 +1,8 @@
 package org.company.finance.tally.domain.repository;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.tally.application.query.model.ExpenseRecordQueryModel;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 
 import java.util.List;
 

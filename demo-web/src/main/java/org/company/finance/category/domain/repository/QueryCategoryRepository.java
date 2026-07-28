@@ -1,11 +1,11 @@
 package org.company.finance.category.domain.repository;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.category.application.query.model.CategorySnapshot;
 import org.company.finance.category.application.query.model.DataCategoryVO;
 import org.company.finance.category.interfaces.rest.request.CategoryRequestVO;
 import org.company.finance.category.interfaces.rest.response.CategoryResponse;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 
 import java.util.List;
 import java.util.Set;

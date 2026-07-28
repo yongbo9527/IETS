@@ -1,8 +1,8 @@
 package org.company.finance.infrastructure.config;
 
 import lombok.RequiredArgsConstructor;
-import org.company.finance.infrastructure.security.JwtAuthenticationEntryPoint;
-import org.company.finance.infrastructure.security.JwtAuthenticationFilter;
+import org.company.finance.auth.infrastructure.security.JwtAuthenticationEntryPoint;
+import org.company.finance.auth.infrastructure.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

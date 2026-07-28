@@ -1,11 +1,11 @@
 package org.company.finance.auth.application.query;
 
 import lombok.RequiredArgsConstructor;
+import org.company.finance.auth.domain.repository.QueryUserRepository;
+import org.company.finance.auth.domain.repository.UserPermissionRepository;
+import org.company.finance.auth.infrastructure.persistence.entity.SysUserEntity;
+import org.company.finance.auth.infrastructure.persistence.entity.SysUserInfoEntity;
 import org.company.finance.auth.interfaces.rest.response.UserInfoVO;
-import org.company.finance.domain.repository.UserPermissionRepository;
-import org.company.finance.domain.repository.QueryUserRepository;
-import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
-import org.company.finance.infrastructure.persistence.entity.SysUserInfoEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

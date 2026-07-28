@@ -4,12 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
-import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.category.application.query.model.CategorySnapshot;
 import org.company.finance.category.application.query.model.DataCategoryVO;
 import org.company.finance.category.domain.repository.QueryCategoryRepository;
 import org.company.finance.category.interfaces.rest.request.CategoryRequestVO;
 import org.company.finance.category.interfaces.rest.response.CategoryResponse;
+import org.company.finance.tally.interfaces.rest.request.QueryBalanceVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
