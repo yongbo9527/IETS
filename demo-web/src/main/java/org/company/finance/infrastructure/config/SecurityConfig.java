@@ -15,6 +15,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ *  @Author: Ron Yu
+ *  @Create: 2026-04-02 18:14
+ *
+ */
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -41,6 +47,12 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/sys/login", "/sys/register", "/user/register").permitAll()
+//                放行接口
+//                .antMatchers(
+//                        "/category/queryCategory",
+//                        "/category/queryAllCategory",
+//                        "/category/queryTreeCategoryList"
+//                ).permitAll()
                 .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/v3/api-docs", "/webjars/**").permitAll()
                 .antMatchers("/doc.html", "/js/**", "/css/**", "/fonts/**", "/favicon.ico").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()

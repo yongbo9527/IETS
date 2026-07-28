@@ -20,7 +20,7 @@ public class SysLoginRequestVO implements Serializable {
     private String username;
 
     @NotBlank(message = "密码不能为空")
-    @Size(min = 6, max = 100, message = "密码长度必须在6-100之间")
+    @Size(min = 4, max = 100, message = "密码长度必须在4-100之间")
     private String password;
 
     @Size(max = 10, message = "验证码长度不能超过10")
