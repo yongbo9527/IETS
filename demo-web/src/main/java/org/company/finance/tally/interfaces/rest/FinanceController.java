@@ -27,7 +27,7 @@ import java.io.IOException;
  * @Create: 2024-08-30 10:35
  */
 @RestController
-@RequestMapping("/tally")
+@RequestMapping("/records")
 @Api(tags = "收支记录")
 @RequiredArgsConstructor
 @Validated
@@ -38,60 +38,62 @@ public class FinanceController {
     private final ImportExportService importExportService;
 
     @ApiOperation(value = "直接查询收支数据")
-    @PostMapping("/listDailyRecords")
+    @PostMapping("/search")
     public R<Page<ExpenseRecordResponse>> listDailyRecords(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.listDailyRecords(vo));
     }
 
 
     @ApiOperation(value = "新增收支记录")
-    @PutMapping("/saveRecord")
+    @PostMapping
     public R saveRecord(@Validated @RequestBody CreateExpenseRecordRequest request) {
         commandService.saveRecord(request);
         return R.ok("新增成功");
     }
 
     @ApiOperation(value = "修改收支记录")
-    @PutMapping("/updateRecord")
-    public R updateRecord(@Validated @RequestBody UpdateExpenseRecordRequest request) {
+    @PutMapping("/{id}")
+    public R updateRecord(@PathVariable @Min(value = 1, message = "ID不能小于1") Integer id,
+                          @Validated @RequestBody UpdateExpenseRecordRequest request) {
+        request.setId(id);
         commandService.updateRecord(request);
         return R.ok("修改成功");
     }
 
     @ApiOperation(value = "删除收支记录")
-    @DeleteMapping("/deleteRecord")
-    public R deleteRecord(@Min(value = 1, message = "ID不能小于1") Long id) {
+    @DeleteMapping("/{id}")
+    public R deleteRecord(@PathVariable @Min(value = 1, message = "ID不能小于1") Long id) {
         commandService.deleteRecord(id);
         return R.ok("删除成功");
     }
 
     @ApiOperation("查询收支余额表格")
-    @PostMapping("/getBalanceTable")
+    @PostMapping("/balance-table")
     public R<DynamicTableResponse> getBalanceTable(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.getBalanceTable(vo));
     }
 
     @ApiOperation(value = "查询收支记录结果集返回")
-    @PostMapping("/getCompactBalanceTable")
+    @PostMapping("/compact-balance-table")
     public R<DynamicTableResponse> getCompactBalanceTable(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.getCompactBalanceTable(vo));
     }
 
     @ApiOperation(value = "数据模板导出")
-    @PostMapping("/exportTemplate")
+    @PostMapping("/template/export")
     public void exportTemplate(HttpServletResponse response) throws IOException {
         importExportService.exportTemplate(response);
     }
 
     @ApiOperation(value = "数据导入")
-    @PostMapping("/importData")
+    @PostMapping("/import")
     public R importData(@RequestParam("file") MultipartFile file) throws Exception {
         String result = importExportService.importData(file);
         return R.ok(result);
     }
 
     @ApiOperation(value = "数据导出")
-    @PostMapping("/exportData")
+    @PostMapping("/export")
     public void exportData(@Validated @RequestBody ImportExportRequestVO vo, HttpServletResponse response) throws IOException {
         importExportService.exportData(vo, response);
     }

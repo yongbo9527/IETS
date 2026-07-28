@@ -25,7 +25,7 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 @Api(value = "类目")
 @RequiredArgsConstructor
 @Validated
@@ -35,43 +35,45 @@ public class CategoryController {
     private final CategoryCommandService commandCategoryService;
 
     @ApiOperation(value = "分页查询类目")
-    @PostMapping("/queryCategory")
+    @PostMapping("/search")
     public R<Page<CategoryResponse>> queryCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
         Page<CategoryResponse> entityPage = queryCategoryService.queryCategory(requestVO);
         return R.ok(entityPage);
     }
 
     @ApiOperation(value = "查询所有类目")
-    @PostMapping("/queryAllCategory")
+    @PostMapping("/all")
     public R<List<CategoryResponse>> queryAllCategory(@Validated @RequestBody CategoryRequestVO requestVO) {
         List<CategoryResponse> entityPage = queryCategoryService.queryAllCategory(requestVO);
         return R.ok(entityPage);
     }
 
     @ApiOperation(value = "查询树形类目结构")
-    @PostMapping("/queryTreeCategoryList")
+    @PostMapping("/tree")
     public R<List<CategoryTreeNodeResponse>> queryTreeCategoryList() {
         List<CategoryTreeNodeResponse> list = queryCategoryService.queryTreeCategoryList();
         return R.ok(list);
     }
 
     @ApiOperation(value = "新增类目")
-    @PostMapping("/addCategory")
+    @PostMapping
     public R addCategory(@Validated @RequestBody CreateCategoryRequest request) {
         commandCategoryService.addCategory(request);
         return R.ok("新增成功！");
     }
 
     @ApiOperation(value = "删除类目")
-    @PostMapping("/deleteCategory")
-    public R deleteCategory(@NotNull @Min(value = 1, message = "ID不能小于1") Integer id) {
+    @DeleteMapping("/{id}")
+    public R deleteCategory(@PathVariable @NotNull @Min(value = 1, message = "ID不能小于1") Integer id) {
         commandCategoryService.deleteCategory(id);
         return R.ok("删除成功！");
     }
 
     @ApiOperation(value = "修改类目")
-    @PostMapping("/updateCategory")
-    public R updateCategory(@Validated @RequestBody UpdateCategoryRequest request) {
+    @PutMapping("/{id}")
+    public R updateCategory(@PathVariable @NotNull @Min(value = 1, message = "ID不能小于1") Integer id,
+                            @Validated @RequestBody UpdateCategoryRequest request) {
+        request.setId(id);
         commandCategoryService.updateCategory(request);
         return R.ok("修改成功！");
     }

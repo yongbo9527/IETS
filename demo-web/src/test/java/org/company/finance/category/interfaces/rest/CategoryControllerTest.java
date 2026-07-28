@@ -108,7 +108,7 @@ class CategoryControllerTest {
 
         when(queryCategoryService.queryCategory(any(CategoryRequestVO.class))).thenReturn(page);
 
-        mockMvc.perform(post("/category/queryCategory")
+        mockMvc.perform(post("/categories/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"pageNum\":1,\"pageSize\":10,\"categoryName\":\"手机\"}"))
                 .andExpect(status().isOk())
@@ -146,7 +146,7 @@ class CategoryControllerTest {
         // 设置请求头 Content-Type 为 application/json，表示发送的是 JSON 数据
         // 使用 ObjectMapper 将 requestVO 对象序列化为 JSON 字符串作为请求体
         // 这比手写 JSON 字符串更安全、不易出错（避免拼写错误或格式问题）
-        ResultActions result = mockMvc.perform(post("/category/queryAllCategory")
+        ResultActions result = mockMvc.perform(post("/categories/all")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestVO)));
 
@@ -208,7 +208,7 @@ class CategoryControllerTest {
         when(queryCategoryService.queryTreeCategoryList())
                 .thenReturn(Collections.singletonList(treeNodeResponse));
 
-        mockMvc.perform(post("/category/queryTreeCategoryList"))
+        mockMvc.perform(post("/categories/tree"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data[0].categoryName").value("电子产品"))
@@ -231,7 +231,7 @@ class CategoryControllerTest {
                 + "\"remark\": \"新增服饰类目\""
                 + "}";
 
-        mockMvc.perform(post("/category/addCategory")
+        mockMvc.perform(post("/categories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
                 .andExpect(status().isOk())
@@ -247,8 +247,7 @@ class CategoryControllerTest {
     void testDeleteCategory() throws Exception {
         doNothing().when(commandCategoryService).deleteCategory(any(Integer.class));
 
-        mockMvc.perform(post("/category/deleteCategory")
-                        .param("id", "1"))
+        mockMvc.perform(delete("/categories/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.msg").value("执行成功"))
@@ -271,7 +270,7 @@ class CategoryControllerTest {
                 + "\"remark\": \"更新为高端手机类目\""
                 + "}";
 
-        mockMvc.perform(post("/category/updateCategory")
+        mockMvc.perform(put("/categories/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
                 .andExpect(status().isOk())

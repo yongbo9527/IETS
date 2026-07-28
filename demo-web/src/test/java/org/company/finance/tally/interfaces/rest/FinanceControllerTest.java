@@ -62,7 +62,7 @@ class FinanceControllerTest {
         page.setTotal(0);
         when(financeQueryService.listDailyRecords(any(QueryBalanceVO.class))).thenReturn(page);
 
-        mockMvc.perform(post("/tally/listDailyRecords")
+        mockMvc.perform(post("/records/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"current\":1,\"pageSize\":10,\"startDate\":\"2026-01-01\",\"endDate\":\"2026-01-31\"}"))
                 .andExpect(status().isOk())
@@ -81,7 +81,7 @@ class FinanceControllerTest {
         request.setExpenseType(1);
         request.setRemark("午饭");
 
-        mockMvc.perform(put("/tally/saveRecord")
+        mockMvc.perform(post("/records")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(OBJECT_MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -104,7 +104,7 @@ class FinanceControllerTest {
         request.setExpenseType(1);
         request.setRemark("晚饭");
 
-        mockMvc.perform(put("/tally/updateRecord")
+        mockMvc.perform(put("/records/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(OBJECT_MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
