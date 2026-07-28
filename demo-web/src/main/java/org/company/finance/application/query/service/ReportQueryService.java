@@ -1,6 +1,5 @@
 package org.company.finance.application.query.service;
 
-import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.company.finance.application.vo.calendar.IncomeExpenseDataVO;
@@ -100,8 +99,8 @@ public class ReportQueryService {
         Map<String, List<ReportDataResponse>> dateExpenseMap = reportDataResponseList.stream().collect(Collectors.groupingBy(ReportDataResponse::getDate));
         // 封装echarts数据
         lineEchartsResponse.setXAxisData(dateList);
-        List<BigDecimal> incomeData = Lists.newArrayListWithCapacity(dateList.size());
-        List<BigDecimal> expenseData = Lists.newArrayListWithCapacity(dateList.size());
+        List<BigDecimal> incomeData = new java.util.ArrayList<>(dateList.size());
+        List<BigDecimal> expenseData = new java.util.ArrayList<>(dateList.size());
         for (String s : dateList) {
             List<ReportDataResponse> dataResponses = dateExpenseMap.get(s);
             if (dataResponses != null) {
@@ -126,7 +125,7 @@ public class ReportQueryService {
         List<BigCategoryExpenseResponse> effectiveList = list.stream().filter(item -> item.getExpenseTotal().compareTo(BigDecimal.ZERO) != 0).collect(Collectors.toList());
 
         BigDecimal totalMoney = effectiveList.stream().map(BigCategoryExpenseResponse::getExpenseTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
-        List<BigCategoryExpenseResponse> results = Lists.newArrayList();
+        List<BigCategoryExpenseResponse> results = new java.util.ArrayList<>();
         if (totalMoney.compareTo(BigDecimal.ZERO) != 0) {
             results = effectiveList.stream().map(item -> {
                 item.setExpensePercent(item.getExpenseTotal().divide(totalMoney, 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -152,7 +151,7 @@ public class ReportQueryService {
         lineEchartsResponse.setXAxisData(dateList);
         List<ReportDataResponse> dataResponseList = queryReportRepository.selectExpenseByMonthDate(vo);
         Map<String, BigDecimal> monthAmountMap = dataResponseList.stream().collect(Collectors.toMap(ReportDataResponse::getDate, ReportDataResponse::getAmount));
-        List<BigDecimal> expenseData = Lists.newArrayListWithCapacity(dateList.size());
+        List<BigDecimal> expenseData = new java.util.ArrayList<>(dateList.size());
         for (int i = 0; i < dateList.size(); i++) {
             String dateStr = dateList.get(i);
             BigDecimal orDefault = monthAmountMap.getOrDefault(dateStr, BigDecimal.ZERO);
@@ -177,8 +176,8 @@ public class ReportQueryService {
         List<String> categoryList = datasetVOList.stream().map(ReportDatasetVO::getParentName).distinct().collect(Collectors.toList());
         // 日期列表
         List<String> dateList = datasetVOList.stream().map(ReportDatasetVO::getDailyDate).distinct().collect(Collectors.toList());
-        List<List<Object>> outerList = Lists.newArrayListWithCapacity(categoryList.size() + 1);
-        List<Object> productList = Lists.newArrayListWithCapacity(dateList.size() + 1);
+        List<List<Object>> outerList = new java.util.ArrayList<>(categoryList.size() + 1);
+        List<Object> productList = new java.util.ArrayList<>(dateList.size() + 1);
         productList.add("product");
         for (String date : dateList) {
             productList.add(date);

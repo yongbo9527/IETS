@@ -1,10 +1,9 @@
 package org.company.finance.tally.interfaces.rest.request;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -13,15 +12,15 @@ import java.io.Serializable;
  *
  */
 @Data
-@ApiModel("导入导出请求参数")
+@Schema(description = "导入导出请求参数")
 public class ImportExportRequestVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "日期格式不能为空")
-    @ApiModelProperty("开始日期 yyyy-MM-dd")
+    @Schema(description = "开始日期 yyyy-MM-dd")
     private String startDate;
 
     @NotBlank(message = "结束日期不能为空")
-    @ApiModelProperty("结束日期 yyyy-MM-dd")
+    @Schema(description = "结束日期 yyyy-MM-dd")
     private String endDate;
 }

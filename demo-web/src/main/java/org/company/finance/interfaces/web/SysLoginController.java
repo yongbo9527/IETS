@@ -1,7 +1,7 @@
 package org.company.finance.interfaces.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.company.finance.application.command.service.UserCommandService;
 import org.company.finance.application.query.service.UserQueryService;
@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *  @Author: Ron Yu
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/sys")
-@Api(tags = "登录接口")
+@Tag(name = "登录接口")
 @RequiredArgsConstructor
 @Validated
 public class SysLoginController {
@@ -33,7 +33,7 @@ public class SysLoginController {
     private final UserQueryService userQueryService;
 
     @PostMapping("/login")
-    @ApiOperation("登录")
+    @Operation(summary = "登录")
     public R<LoginResponseVO> login(@Validated @RequestBody SysLoginRequestVO requestVO, HttpServletRequest httpRequest) {
         String clientIp = getClientIp(httpRequest);
         LoginResponseVO login = userCommandService.login(requestVO, clientIp);
@@ -41,13 +41,13 @@ public class SysLoginController {
     }
 
     @PostMapping("/refreshToken")
-    @ApiOperation("刷新 Token")
+    @Operation(summary = "刷新 Token")
     public R<LoginResponseVO> refreshToken(@Validated @RequestBody RefreshTokenRequestVO requestVO) {
         return R.ok(userCommandService.refreshToken(requestVO.getRefreshToken()));
     }
 
     @GetMapping("/logout")
-    @ApiOperation("退出")
+    @Operation(summary = "退出")
     public R logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Long) {
@@ -59,7 +59,7 @@ public class SysLoginController {
     }
 
     @GetMapping("/userInfo")
-    @ApiOperation("获取当前用户信息")
+    @Operation(summary = "获取当前用户信息")
     public R<UserInfoVO> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

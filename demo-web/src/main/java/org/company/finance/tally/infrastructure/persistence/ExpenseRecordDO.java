@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;

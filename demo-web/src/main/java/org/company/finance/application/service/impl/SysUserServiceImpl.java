@@ -1,9 +1,9 @@
 package org.company.finance.application.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.company.finance.application.vo.request.SysLoginRequestVO;
+import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
 import org.company.finance.infrastructure.persistence.mapper.SysUserMapper;
 import org.company.finance.application.service.SysUserService;
@@ -23,7 +23,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
     private SysUserTokenService sysUserTokenService;
 
     @Override
-    public R login(SysLoginRequestVO requestVO) {
+    public R<?> login(SysLoginRequestVO requestVO) {
         LambdaQueryWrapper<SysUserEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SysUserEntity::getUsername, requestVO.getUsername());
         SysUserEntity user = this.getOne(queryWrapper);
@@ -39,7 +39,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         }
 
         //生成token，并保存到数据库
-        R r = sysUserTokenService.createToken(user.getId());
-        return r;
+        return sysUserTokenService.createToken(user.getId());
     }
 }

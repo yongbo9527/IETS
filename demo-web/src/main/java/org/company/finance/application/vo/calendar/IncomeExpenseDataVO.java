@@ -1,7 +1,6 @@
 package org.company.finance.application.vo.calendar;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +13,14 @@ import java.math.BigDecimal;
  *
  */
 @Data
-@ApiModel("日历支出收入数据")
+@Schema(description = "日历支出收入数据")
 @AllArgsConstructor
 @NoArgsConstructor
 public class IncomeExpenseDataVO {
 
-    @ApiModelProperty("收入")
+    @Schema(description = "收入")
     private BigDecimal income;
 
-    @ApiModelProperty("支出")
+    @Schema(description = "支出")
     private BigDecimal expense;
 }

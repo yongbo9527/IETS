@@ -1,8 +1,8 @@
 package org.company.finance.tally.interfaces.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.company.finance.tally.application.command.FinanceCommandService;
 import org.company.finance.tally.application.query.FinanceQueryService;
@@ -18,8 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Min;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Min;
 import java.io.IOException;
 
 /**
@@ -28,7 +28,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("/records")
-@Api(tags = "收支记录")
+@Tag(name = "收支记录")
 @RequiredArgsConstructor
 @Validated
 public class FinanceController {
@@ -37,62 +37,62 @@ public class FinanceController {
     private final FinanceQueryService queryService;
     private final ImportExportService importExportService;
 
-    @ApiOperation(value = "直接查询收支数据")
+    @Operation(summary = "直接查询收支数据")
     @PostMapping("/search")
     public R<Page<ExpenseRecordResponse>> listDailyRecords(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.listDailyRecords(vo));
     }
 
 
-    @ApiOperation(value = "新增收支记录")
+    @Operation(summary = "新增收支记录")
     @PostMapping
     public R saveRecord(@Validated @RequestBody CreateExpenseRecordRequest request) {
         commandService.saveRecord(request);
         return R.ok("新增成功");
     }
 
-    @ApiOperation(value = "修改收支记录")
+    @Operation(summary = "修改收支记录")
     @PutMapping("/{id}")
-    public R updateRecord(@PathVariable @Min(value = 1, message = "ID不能小于1") Integer id,
+    public R updateRecord(@PathVariable("id") @Min(value = 1, message = "ID不能小于1") Integer id,
                           @Validated @RequestBody UpdateExpenseRecordRequest request) {
         request.setId(id);
         commandService.updateRecord(request);
         return R.ok("修改成功");
     }
 
-    @ApiOperation(value = "删除收支记录")
+    @Operation(summary = "删除收支记录")
     @DeleteMapping("/{id}")
-    public R deleteRecord(@PathVariable @Min(value = 1, message = "ID不能小于1") Long id) {
+    public R deleteRecord(@PathVariable("id") @Min(value = 1, message = "ID不能小于1") Long id) {
         commandService.deleteRecord(id);
         return R.ok("删除成功");
     }
 
-    @ApiOperation("查询收支余额表格")
+    @Operation(summary = "查询收支余额表格")
     @PostMapping("/balance-table")
     public R<DynamicTableResponse> getBalanceTable(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.getBalanceTable(vo));
     }
 
-    @ApiOperation(value = "查询收支记录结果集返回")
+    @Operation(summary = "查询收支记录结果集返回")
     @PostMapping("/compact-balance-table")
     public R<DynamicTableResponse> getCompactBalanceTable(@Validated @RequestBody QueryBalanceVO vo) {
         return R.ok(queryService.getCompactBalanceTable(vo));
     }
 
-    @ApiOperation(value = "数据模板导出")
+    @Operation(summary = "数据模板导出")
     @PostMapping("/template/export")
     public void exportTemplate(HttpServletResponse response) throws IOException {
         importExportService.exportTemplate(response);
     }
 
-    @ApiOperation(value = "数据导入")
+    @Operation(summary = "数据导入")
     @PostMapping("/import")
     public R importData(@RequestParam("file") MultipartFile file) throws Exception {
         String result = importExportService.importData(file);
         return R.ok(result);
     }
 
-    @ApiOperation(value = "数据导出")
+    @Operation(summary = "数据导出")
     @PostMapping("/export")
     public void exportData(@Validated @RequestBody ImportExportRequestVO vo, HttpServletResponse response) throws IOException {
         importExportService.exportData(vo, response);

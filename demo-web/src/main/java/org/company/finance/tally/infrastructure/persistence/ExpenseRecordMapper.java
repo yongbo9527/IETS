@@ -15,12 +15,6 @@ import org.company.finance.tally.infrastructure.persistence.ExpenseRecordDO;
 @Mapper
 public interface ExpenseRecordMapper extends BaseMapper<ExpenseRecordDO> {
     /**
-     * 插入数据，存在则更新
-     * @param entity
-     */
-    void insertOrUpdate(ExpenseRecordDO entity);
-
-    /**
      * 查询支出原始数据
      *
      * @param vo

@@ -1,7 +1,7 @@
 package org.company.finance.application.service.impl;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.SysUserTokenEntity;
 import org.company.finance.infrastructure.persistence.mapper.SysUserTokenMapper;
 import org.company.finance.application.service.SysUserTokenService;
@@ -23,7 +23,7 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenMapper, Sys
     private final static int EXPIRE = 3600 * 12;
 
     @Override
-    public R createToken(long userId) {
+    public R<?> createToken(long userId) {
         //生成一个token
         String token = TokenGenerator.generateValue();
 
@@ -58,8 +58,7 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenMapper, Sys
         HashMap<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("expire", EXPIRE);
-        R ok = R.ok(map);
-        return ok;
+        return R.ok(map);
     }
 
     @Override

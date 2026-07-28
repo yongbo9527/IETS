@@ -1,7 +1,6 @@
 package org.company.finance.application.vo.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,15 +12,15 @@ import java.util.List;
  *
  */
 @Data
-@ApiModel("折线图数据返回")
+@Schema(description = "折线图数据返回")
 public class LineEchartsResponse {
-    @ApiModelProperty("x轴时间日期数据")
+    @Schema(description = "x轴时间日期数据")
     private List<String> xAxisData;
 
-    @ApiModelProperty("收入数据")
+    @Schema(description = "收入数据")
     private List<BigDecimal> incomeData;
 
-    @ApiModelProperty("支出数据")
+    @Schema(description = "支出数据")
     private List<BigDecimal> expenseData;
 
 

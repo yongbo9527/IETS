@@ -1,7 +1,6 @@
 package org.company.finance.application.vo.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,28 +11,28 @@ import java.math.BigDecimal;
  *
  */
 @Data
-@ApiModel("饼图列表：大类支出统计数据")
+@Schema(description = "饼图列表：大类支出统计数据")
 public class BigCategoryExpenseResponse {
 
-    @ApiModelProperty("父级类目id")
+    @Schema(description = "父级类目id")
     private Integer parentId;
 
-    @ApiModelProperty("父级类目名称")
+    @Schema(description = "父级类目名称")
     private String parentCategory;
 
-    @ApiModelProperty("支出金额")
+    @Schema(description = "支出金额")
     private BigDecimal expenseTotal;
 
-    @ApiModelProperty("支出占比")
+    @Schema(description = "支出占比")
     private BigDecimal expensePercent = BigDecimal.ZERO;
 
-    @ApiModelProperty("支出笔数")
+    @Schema(description = "支出笔数")
     private Integer expenseCount;
 
-    @ApiModelProperty("子类目id")
+    @Schema(description = "子类目id")
     private Integer childId;
 
-    @ApiModelProperty("子类目名称")
+    @Schema(description = "子类目名称")
     private String childCategory;
 
 }

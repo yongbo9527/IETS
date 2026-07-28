@@ -6,7 +6,7 @@ import org.company.finance.infrastructure.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -38,26 +38,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/sys/login", "/sys/refreshToken", "/sys/register", "/user/register").permitAll()
-//                放行接口
-//                .antMatchers(
-//                        "/category/queryCategory",
-//                        "/category/queryAllCategory",
-//                        "/category/queryTreeCategoryList"
-//                ).permitAll()
-                .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/v3/api-docs", "/webjars/**").permitAll()
-                .antMatchers("/doc.html", "/js/**", "/css/**", "/fonts/**", "/favicon.ico").permitAll()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
+                .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/sys/login", "/sys/refreshToken", "/sys/register", "/user/register").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/webjars/**").permitAll()
+                        .requestMatchers("/doc.html", "/js/**", "/css/**", "/fonts/**", "/favicon.ico").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

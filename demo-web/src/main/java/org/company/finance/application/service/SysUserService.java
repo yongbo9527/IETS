@@ -1,7 +1,7 @@
 package org.company.finance.application.service;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
 import org.company.finance.application.vo.request.SysLoginRequestVO;
 
@@ -12,5 +12,5 @@ import org.company.finance.application.vo.request.SysLoginRequestVO;
  */
 public interface SysUserService extends IService<SysUserEntity> {
 
-    R login(SysLoginRequestVO requestVO);
+    R<?> login(SysLoginRequestVO requestVO);
 }

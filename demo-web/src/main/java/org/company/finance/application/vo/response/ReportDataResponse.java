@@ -1,7 +1,6 @@
 package org.company.finance.application.vo.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,15 +11,15 @@ import java.math.BigDecimal;
  *
  */
 @Data
-@ApiModel("日历支出收入数据返回")
+@Schema(description = "日历支出收入数据返回")
 public class ReportDataResponse {
 
-    @ApiModelProperty("日期")
+    @Schema(description = "日期")
     private String date;
 
-    @ApiModelProperty("收入|支出金额")
+    @Schema(description = "收入|支出金额")
     private BigDecimal amount;
 
-    @ApiModelProperty("消费类型，1-支出，2-收入")
+    @Schema(description = "消费类型，1-支出，2-收入")
     private Integer expenseType;
 }

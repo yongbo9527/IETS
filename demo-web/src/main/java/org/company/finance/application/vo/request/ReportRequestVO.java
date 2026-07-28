@@ -1,11 +1,10 @@
 package org.company.finance.application.vo.request;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -14,7 +13,7 @@ import java.io.Serializable;
  *
  */
 @Data
-@ApiModel("报表查询参数")
+@Schema(description = "报表查询参数")
 public class ReportRequestVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

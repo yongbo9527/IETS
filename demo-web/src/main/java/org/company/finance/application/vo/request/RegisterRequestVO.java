@@ -1,11 +1,10 @@
 package org.company.finance.application.vo.request;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -14,21 +13,21 @@ import java.io.Serializable;
  *
  */
 @Data
-@ApiModel("注册请求")
+@Schema(description = "注册请求")
 public class RegisterRequestVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "用户名不能为空")
     @Size(min = 2, max = 50, message = "用户名长度必须在2-50之间")
-    @ApiModelProperty("用户名")
+    @Schema(description = "用户名")
     private String username;
 
     @NotBlank(message = "密码不能为空")
     @Size(min = 4, max = 100, message = "密码长度必须在4-100之间")
-    @ApiModelProperty("密码")
+    @Schema(description = "密码")
     private String password;
 
     @NotBlank(message = "确认密码不能为空")
-    @ApiModelProperty("确认密码")
+    @Schema(description = "确认密码")
     private String confirmPassword;
 }

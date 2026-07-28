@@ -1,7 +1,7 @@
 package org.company.finance.interfaces.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.company.finance.application.command.service.UserCommandService;
 import org.company.finance.application.vo.request.RegisterRequestVO;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/user")
-@Api(tags = "用户接口")
+@Tag(name = "用户接口")
 @RequiredArgsConstructor
 @Validated
 public class SysUserController {
@@ -26,14 +26,14 @@ public class SysUserController {
     private final UserCommandService userCommandService;
 
     @PostMapping("/register")
-    @ApiOperation("用户注册")
+    @Operation(summary = "用户注册")
     public R register(@Validated @RequestBody RegisterRequestVO requestVO) {
         userCommandService.register(requestVO);
         return R.ok("注册成功");
     }
 
     @PostMapping("/deactivate")
-    @ApiOperation("账号注销")
+    @Operation(summary = "账号注销")
     public R deactivate() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

@@ -1,7 +1,7 @@
 package org.company.finance.application.service;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.SysUserTokenEntity;
 
 /**
@@ -15,7 +15,7 @@ public interface SysUserTokenService extends IService<SysUserTokenEntity> {
      * 生成token
      * @param userId  用户ID
      */
-    R createToken(long userId);
+    R<?> createToken(long userId);
 
     /**
      * 退出，修改token值
