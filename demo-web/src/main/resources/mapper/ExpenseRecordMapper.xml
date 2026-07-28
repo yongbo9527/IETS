@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.company.finance.infrastructure.persistence.mapper.ExpenseRecordMapper">
+<mapper namespace="org.company.finance.tally.infrastructure.persistence.ExpenseRecordMapper">
 
 
     <insert id="insertOrUpdate">
@@ -20,7 +20,7 @@
             update_name = VALUES(update_name),
             update_time = VALUES(update_time)
     </insert>
-    <select id="selectExpenseMetaData" resultType="org.company.finance.infrastructure.persistence.entity.ExpenseRecordDO">
+    <select id="selectExpenseMetaData" resultType="org.company.finance.tally.infrastructure.persistence.ExpenseRecordDO">
         SELECT
             record.id,
             record.category_id,

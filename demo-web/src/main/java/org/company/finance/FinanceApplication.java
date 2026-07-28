@@ -10,7 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication
-@MapperScan("org.company.finance.infrastructure.persistence.mapper")
+@MapperScan({
+        "org.company.finance.infrastructure.persistence.mapper",
+        "org.company.finance.tally.infrastructure.persistence",
+        "org.company.finance.category.infrastructure.persistence"
+})
 public class FinanceApplication {
 
     public static void main(String[] args) {

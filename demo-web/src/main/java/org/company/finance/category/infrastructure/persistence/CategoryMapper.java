@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.company.finance.application.vo.balance.QueryBalanceVO;
 import org.company.finance.category.application.query.model.DataCategoryVO;
-import org.company.finance.category.infrastructure.persistence.CategoryDO;
 
 import java.util.List;
 
