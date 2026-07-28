@@ -50,7 +50,7 @@ public class UserCommandService {
     @Value("${jwt.refresh-expire-days:7}")
     private int refreshExpireDays;
 
-    @Transactional
+    @Transactional(noRollbackFor = IllegalArgumentException.class)
     public LoginResponseVO login(SysLoginRequestVO requestVO, String clientIp) {
         // 1. 验证验证码（可选）
         if (requestVO.getCaptchaId() != null && requestVO.getCaptchaCode() != null) {
@@ -229,6 +229,21 @@ public class UserCommandService {
         sysUserTokenMapper.updateById(tokenEntity);
     }
 
+    /**
+     * 持久化当前用户的 token 会话状态。
+     *
+     * <p>登录和 refresh 成功后都会调用这里，把当前唯一有效的 accessToken 和 refreshToken
+     * 写入 {@code sys_user_token}。如果用户第一次登录就插入记录；如果已经存在会话记录，
+     * 则直接覆盖旧 token，实现旧 token 失效、当前 token 生效。</p>
+     *
+     * <p>这里同时更新 access/refresh 过期时间、状态位和更新时间，供
+     * {@code JwtAuthenticationFilter} 以及 refreshToken 流程做服务端校验。</p>
+     *
+     * @param userId              用户ID
+     * @param accessToken         新签发的 access token
+     * @param refreshToken        新签发的 refresh token
+     * @param accessExpireMinutes access token 过期分钟数
+     */
     private void persistUserToken(Long userId, String accessToken, String refreshToken, int accessExpireMinutes) {
         LocalDateTime now = LocalDateTime.now();
         SysUserTokenEntity tokenEntity = sysUserTokenMapper.selectById(userId);

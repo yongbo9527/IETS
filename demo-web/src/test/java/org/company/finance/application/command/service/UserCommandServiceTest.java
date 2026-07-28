@@ -14,9 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -141,6 +144,16 @@ class UserCommandServiceTest {
         when(jwtUtil.getTokenType("old-refresh-token")).thenReturn("refresh");
 
         assertThrows(IllegalArgumentException.class, () -> userCommandService.refreshToken("old-refresh-token"));
+    }
+
+    @Test
+    void shouldNotRollbackFailedLoginCountWhenPasswordIsWrong() throws Exception {
+        Method loginMethod = UserCommandService.class.getMethod("login", SysLoginRequestVO.class, String.class);
+        Transactional transactional = loginMethod.getAnnotation(Transactional.class);
+
+        org.junit.jupiter.api.Assertions.assertTrue(
+                Arrays.asList(transactional.noRollbackFor()).contains(IllegalArgumentException.class)
+        );
     }
 
     private com.auth0.jwt.interfaces.DecodedJWT mockDecodedJwt(Long userId, String username, String tokenType) {
