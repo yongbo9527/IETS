@@ -1,7 +1,6 @@
-package org.company.finance.application.vo.response;
+package org.company.finance.auth.interfaces.rest.response;
 
 import lombok.Data;
-import org.company.finance.application.vo.UserInfoVO;
 
 /**
  *  @Author: Ron Yu

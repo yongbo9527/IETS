@@ -1,10 +1,10 @@
-package org.company.finance.interfaces.web;
+package org.company.finance.auth.interfaces.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.company.finance.application.command.service.UserCommandService;
-import org.company.finance.application.query.service.UserQueryService;
-import org.company.finance.application.vo.request.RefreshTokenRequestVO;
-import org.company.finance.application.vo.response.LoginResponseVO;
+import org.company.finance.auth.application.command.UserCommandService;
+import org.company.finance.auth.application.query.UserQueryService;
+import org.company.finance.auth.interfaces.rest.request.RefreshTokenRequestVO;
+import org.company.finance.auth.interfaces.rest.response.LoginResponseVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

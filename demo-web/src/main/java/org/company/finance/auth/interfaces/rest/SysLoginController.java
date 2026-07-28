@@ -1,14 +1,14 @@
-package org.company.finance.interfaces.web;
+package org.company.finance.auth.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.command.service.UserCommandService;
-import org.company.finance.application.query.service.UserQueryService;
-import org.company.finance.application.vo.UserInfoVO;
-import org.company.finance.application.vo.request.RefreshTokenRequestVO;
-import org.company.finance.application.vo.request.SysLoginRequestVO;
-import org.company.finance.application.vo.response.LoginResponseVO;
+import org.company.finance.auth.application.command.UserCommandService;
+import org.company.finance.auth.application.query.UserQueryService;
+import org.company.finance.auth.interfaces.rest.request.RefreshTokenRequestVO;
+import org.company.finance.auth.interfaces.rest.request.SysLoginRequestVO;
+import org.company.finance.auth.interfaces.rest.response.LoginResponseVO;
+import org.company.finance.auth.interfaces.rest.response.UserInfoVO;
 import org.company.finance.common.util.R;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -63,7 +63,7 @@ public class SysLoginController {
     public R<UserInfoVO> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        
+
         UserInfoVO userInfo = userQueryService.getUserInfo(userId);
         return R.ok(userInfo);
     }

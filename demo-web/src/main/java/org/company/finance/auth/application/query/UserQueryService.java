@@ -1,7 +1,7 @@
-package org.company.finance.application.query.service;
+package org.company.finance.auth.application.query;
 
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.vo.UserInfoVO;
+import org.company.finance.auth.interfaces.rest.response.UserInfoVO;
 import org.company.finance.domain.repository.UserPermissionRepository;
 import org.company.finance.domain.repository.QueryUserRepository;
 import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
@@ -40,7 +40,7 @@ public class UserQueryService {
         dto.setRealName(userInfo != null ? userInfo.getRealName() : user.getUsername());
         dto.setAvatar(userInfo != null ? userInfo.getAvatar() : null);
         dto.setRoles(Collections.singletonList("USER"));
-        
+        dto.setPermissions(Collections.emptyList());
         return dto;
     }
 }

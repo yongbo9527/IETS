@@ -1,7 +1,7 @@
-package org.company.finance.application.command.service;
+package org.company.finance.auth.application.command;
 
-import org.company.finance.application.vo.request.SysLoginRequestVO;
-import org.company.finance.application.vo.response.LoginResponseVO;
+import org.company.finance.auth.interfaces.rest.request.SysLoginRequestVO;
+import org.company.finance.auth.interfaces.rest.response.LoginResponseVO;
 import org.company.finance.domain.repository.CommandUserRepository;
 import org.company.finance.domain.repository.QueryCaptchaRepository;
 import org.company.finance.domain.repository.QueryUserRepository;

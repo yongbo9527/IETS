@@ -1,12 +1,11 @@
-package org.company.finance.application.command.service;
+package org.company.finance.auth.application.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.company.finance.application.vo.UserInfoVO;
-import org.company.finance.application.vo.request.RefreshTokenRequestVO;
-import org.company.finance.application.vo.request.RegisterRequestVO;
-import org.company.finance.application.vo.request.SysLoginRequestVO;
-import org.company.finance.application.vo.response.LoginResponseVO;
+import org.company.finance.auth.interfaces.rest.request.RegisterRequestVO;
+import org.company.finance.auth.interfaces.rest.request.SysLoginRequestVO;
+import org.company.finance.auth.interfaces.rest.response.LoginResponseVO;
+import org.company.finance.auth.interfaces.rest.response.UserInfoVO;
 import org.company.finance.common.util.JwtUtil;
 import org.company.finance.domain.repository.CommandUserRepository;
 import org.company.finance.domain.repository.QueryCaptchaRepository;
@@ -15,7 +14,6 @@ import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
 import org.company.finance.infrastructure.persistence.entity.SysUserInfoEntity;
 import org.company.finance.infrastructure.persistence.entity.SysUserTokenEntity;
 import org.company.finance.infrastructure.persistence.mapper.SysUserTokenMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,16 +36,16 @@ public class UserCommandService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${jwt.expire-minutes:120}")
+    @org.springframework.beans.factory.annotation.Value("${jwt.expire-minutes:120}")
     private int expireMinutes;
 
-    @Value("${jwt.access-expire-minutes:120}")
+    @org.springframework.beans.factory.annotation.Value("${jwt.access-expire-minutes:120}")
     private int accessExpireMinutes;
 
-    @Value("${jwt.remember-me-minutes:10080}")
+    @org.springframework.beans.factory.annotation.Value("${jwt.remember-me-minutes:10080}")
     private int rememberMeMinutes;
 
-    @Value("${jwt.refresh-expire-days:7}")
+    @org.springframework.beans.factory.annotation.Value("${jwt.refresh-expire-days:7}")
     private int refreshExpireDays;
 
     @Transactional(noRollbackFor = IllegalArgumentException.class)

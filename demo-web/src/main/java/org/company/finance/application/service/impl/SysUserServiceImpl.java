@@ -2,7 +2,7 @@ package org.company.finance.application.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.company.finance.application.vo.request.SysLoginRequestVO;
+import org.company.finance.auth.interfaces.rest.request.SysLoginRequestVO;
 import org.company.finance.common.util.R;
 import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
 import org.company.finance.infrastructure.persistence.mapper.SysUserMapper;
@@ -29,16 +29,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         SysUserEntity user = this.getOne(queryWrapper);
 
         //账号不存在
-        if(user == null) {
+        if (user == null) {
             return R.failed("账号或密码不正确");
         }
 
-        //账号锁定
-        if(user.getStatusFlag() == 0){
+        if (user.getStatusFlag() == 0) {
             return R.failed("账号已被锁定,请联系管理员");
         }
 
-        //生成token，并保存到数据库
         return sysUserTokenService.createToken(user.getId());
     }
 }

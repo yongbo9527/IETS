@@ -1,10 +1,10 @@
-package org.company.finance.interfaces.web;
+package org.company.finance.auth.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.company.finance.application.command.service.UserCommandService;
-import org.company.finance.application.vo.request.RegisterRequestVO;
+import org.company.finance.auth.application.command.UserCommandService;
+import org.company.finance.auth.interfaces.rest.request.RegisterRequestVO;
 import org.company.finance.common.util.R;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +37,7 @@ public class SysUserController {
     public R deactivate() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        
+
         userCommandService.deactivate(userId);
         SecurityContextHolder.clearContext();
         return R.ok("注销成功");

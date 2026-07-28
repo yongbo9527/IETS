@@ -1,4 +1,4 @@
-package org.company.finance.application.vo.request;
+package org.company.finance.auth.interfaces.rest.request;
 
 import lombok.Data;
 
