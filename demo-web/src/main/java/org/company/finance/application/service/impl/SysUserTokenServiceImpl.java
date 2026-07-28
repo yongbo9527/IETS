@@ -8,7 +8,7 @@ import org.company.finance.application.service.SysUserTokenService;
 import org.company.finance.common.util.TokenGenerator;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 /**
@@ -28,25 +28,28 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenMapper, Sys
         String token = TokenGenerator.generateValue();
 
         //当前时间
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         //过期时间
-        Date expireTime = new Date(now.getTime() + EXPIRE * 1000);
+        LocalDateTime expireTime = now.plusSeconds(EXPIRE);
 
         //判断是否生成过token
         SysUserTokenEntity tokenEntity = this.getById(userId);
         if(tokenEntity == null){
             tokenEntity = new SysUserTokenEntity();
             tokenEntity.setUserId(userId);
-            tokenEntity.setToken(token);
+            tokenEntity.setAccessToken(token);
             tokenEntity.setUpdateTime(now);
-            tokenEntity.setExpireTime(expireTime);
+            tokenEntity.setAccessExpireTime(expireTime);
+            tokenEntity.setStatusFlag(1);
+            tokenEntity.setTokenVersion(1);
 
             //保存token
             this.save(tokenEntity);
         }else{
-            tokenEntity.setToken(token);
+            tokenEntity.setAccessToken(token);
             tokenEntity.setUpdateTime(now);
-            tokenEntity.setExpireTime(expireTime);
+            tokenEntity.setAccessExpireTime(expireTime);
+            tokenEntity.setStatusFlag(1);
 
             //更新token
             this.updateById(tokenEntity);
@@ -61,13 +64,14 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenMapper, Sys
 
     @Override
     public void logout(Long userId) {
-        //生成一个token
-        String token = TokenGenerator.generateValue();
-
-        //修改token
         SysUserTokenEntity tokenEntity = new SysUserTokenEntity();
         tokenEntity.setUserId(userId);
-        tokenEntity.setToken(token);
+        tokenEntity.setAccessToken(null);
+        tokenEntity.setAccessExpireTime(LocalDateTime.now());
+        tokenEntity.setRefreshToken(null);
+        tokenEntity.setRefreshExpireTime(LocalDateTime.now());
+        tokenEntity.setStatusFlag(0);
+        tokenEntity.setUpdateTime(LocalDateTime.now());
         this.updateById(tokenEntity);
     }
 }

@@ -3,6 +3,7 @@ package org.company.finance.application.command.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.company.finance.application.vo.UserInfoVO;
+import org.company.finance.application.vo.request.RefreshTokenRequestVO;
 import org.company.finance.application.vo.request.RegisterRequestVO;
 import org.company.finance.application.vo.request.SysLoginRequestVO;
 import org.company.finance.application.vo.response.LoginResponseVO;
@@ -12,6 +13,8 @@ import org.company.finance.domain.repository.QueryCaptchaRepository;
 import org.company.finance.domain.repository.QueryUserRepository;
 import org.company.finance.infrastructure.persistence.entity.SysUserEntity;
 import org.company.finance.infrastructure.persistence.entity.SysUserInfoEntity;
+import org.company.finance.infrastructure.persistence.entity.SysUserTokenEntity;
+import org.company.finance.infrastructure.persistence.mapper.SysUserTokenMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,14 +34,21 @@ public class UserCommandService {
     private final QueryUserRepository queryUserRepository;
     private final CommandUserRepository commandUserRepository;
     private final QueryCaptchaRepository queryCaptchaRepository;
+    private final SysUserTokenMapper sysUserTokenMapper;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.expire-minutes:120}")
     private int expireMinutes;
 
+    @Value("${jwt.access-expire-minutes:120}")
+    private int accessExpireMinutes;
+
     @Value("${jwt.remember-me-minutes:10080}")
     private int rememberMeMinutes;
+
+    @Value("${jwt.refresh-expire-days:7}")
+    private int refreshExpireDays;
 
     @Transactional
     public LoginResponseVO login(SysLoginRequestVO requestVO, String clientIp) {
@@ -75,11 +85,12 @@ public class UserCommandService {
         handleLoginSuccess(user, clientIp);
 
         // 6. 生成 Token
-        int expireMinute = (requestVO.getRememberMe() != null && requestVO.getRememberMe()) 
-                ? rememberMeMinutes : expireMinutes;
-        
-        String token = jwtUtil.generateToken(user.getId(), user.getUsername());
-        String refreshToken = jwtUtil.generateToken(user.getId(), user.getUsername());
+        int expireMinute = (requestVO.getRememberMe() != null && requestVO.getRememberMe())
+                ? rememberMeMinutes : accessExpireMinutes;
+
+        String token = jwtUtil.generateAccessToken(user.getId(), user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), user.getUsername());
+        persistUserToken(user.getId(), token, refreshToken, expireMinute);
 
         // 7. 构建返回对象
         LoginResponseVO response = new LoginResponseVO();
@@ -96,6 +107,37 @@ public class UserCommandService {
 
         response.setUserInfo(userInfo);
 
+        return response;
+    }
+
+    @Transactional
+    public LoginResponseVO refreshToken(String refreshToken) {
+        Long userId = jwtUtil.getUserIdFromToken(refreshToken);
+        String username = jwtUtil.getUsernameFromToken(refreshToken);
+        String tokenType = jwtUtil.getTokenType(refreshToken);
+        if (!"refresh".equals(tokenType)) {
+            throw new IllegalArgumentException("refreshToken 类型不正确");
+        }
+
+        SysUserTokenEntity tokenEntity = sysUserTokenMapper.selectById(userId);
+        if (tokenEntity == null || !Integer.valueOf(1).equals(tokenEntity.getStatusFlag())) {
+            throw new IllegalArgumentException("refreshToken 已失效");
+        }
+        if (!refreshToken.equals(tokenEntity.getRefreshToken())) {
+            throw new IllegalArgumentException("refreshToken 不匹配");
+        }
+        if (tokenEntity.getRefreshExpireTime() == null || tokenEntity.getRefreshExpireTime().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("refreshToken 已过期");
+        }
+
+        String newAccessToken = jwtUtil.generateAccessToken(userId, username);
+        String newRefreshToken = jwtUtil.generateRefreshToken(userId, username);
+        persistUserToken(userId, newAccessToken, newRefreshToken, accessExpireMinutes);
+
+        LoginResponseVO response = new LoginResponseVO();
+        response.setToken(newAccessToken);
+        response.setRefreshToken(newRefreshToken);
+        response.setExpiresIn(accessExpireMinutes * 60);
         return response;
     }
 
@@ -169,5 +211,43 @@ public class UserCommandService {
         user.setDelFlag(1);
         user.setUpdateTime(LocalDateTime.now());
         commandUserRepository.update(user);
+    }
+
+    @Transactional
+    public void logout(Long userId) {
+        SysUserTokenEntity tokenEntity = sysUserTokenMapper.selectById(userId);
+        if (tokenEntity == null) {
+            return;
+        }
+        tokenEntity.setAccessToken(null);
+        tokenEntity.setAccessExpireTime(LocalDateTime.now());
+        tokenEntity.setRefreshToken(null);
+        tokenEntity.setRefreshExpireTime(LocalDateTime.now());
+        tokenEntity.setStatusFlag(0);
+        tokenEntity.setUpdateTime(LocalDateTime.now());
+        tokenEntity.setTokenVersion((tokenEntity.getTokenVersion() == null ? 0 : tokenEntity.getTokenVersion()) + 1);
+        sysUserTokenMapper.updateById(tokenEntity);
+    }
+
+    private void persistUserToken(Long userId, String accessToken, String refreshToken, int accessExpireMinutes) {
+        LocalDateTime now = LocalDateTime.now();
+        SysUserTokenEntity tokenEntity = sysUserTokenMapper.selectById(userId);
+        if (tokenEntity == null) {
+            tokenEntity = new SysUserTokenEntity();
+            tokenEntity.setUserId(userId);
+            tokenEntity.setTokenVersion(1);
+        }
+        tokenEntity.setAccessToken(accessToken);
+        tokenEntity.setAccessExpireTime(now.plusMinutes(accessExpireMinutes));
+        tokenEntity.setRefreshToken(refreshToken);
+        tokenEntity.setRefreshExpireTime(now.plusDays(refreshExpireDays));
+        tokenEntity.setStatusFlag(1);
+        tokenEntity.setUpdateTime(now);
+
+        if (sysUserTokenMapper.selectById(userId) == null) {
+            sysUserTokenMapper.insert(tokenEntity);
+            return;
+        }
+        sysUserTokenMapper.updateById(tokenEntity);
     }
 }

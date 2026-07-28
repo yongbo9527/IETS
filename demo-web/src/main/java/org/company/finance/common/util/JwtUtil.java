@@ -30,10 +30,22 @@ public class JwtUtil {
 
     // 创建JWT Token
     public String generateToken(Long userId, String username) {
-        return generateToken(userId, username, null);
+        return generateAccessToken(userId, username);
+    }
+
+    public String generateAccessToken(Long userId, String username) {
+        return generateToken(userId, username, "access", null);
+    }
+
+    public String generateRefreshToken(Long userId, String username) {
+        return generateToken(userId, username, "refresh", null);
     }
 
     public String generateToken(Long userId, String username, Map<String, Object> extraClaims) {
+        return generateToken(userId, username, "access", extraClaims);
+    }
+
+    public String generateToken(Long userId, String username, String tokenType, Map<String, Object> extraClaims) {
         // 计算过期时间
         Date now = new Date();
         Date expireTime = new Date(now.getTime() + expireHours * 60 * 60 * 1000);
@@ -43,6 +55,7 @@ public class JwtUtil {
                 .withSubject(userId.toString())  // 主题，通常放用户ID
                 .withClaim("username", username) // 自定义声明：用户名
                 .withClaim("userId", userId)     // 自定义声明：用户ID
+                .withClaim("tokenType", tokenType)
                 .withIssuedAt(now)               // 签发时间
                 .withExpiresAt(expireTime)       // 过期时间
                 .withIssuer("your-app-name")     // 签发者
@@ -74,6 +87,11 @@ public class JwtUtil {
     public String getUsernameFromToken(String token) {
         DecodedJWT decodedJWT = verifyToken(token);
         return decodedJWT.getClaim("username").asString();
+    }
+
+    public String getTokenType(String token) {
+        DecodedJWT decodedJWT = verifyToken(token);
+        return decodedJWT.getClaim("tokenType").asString();
     }
 
     // 检查Token是否即将过期（用于刷新Token）

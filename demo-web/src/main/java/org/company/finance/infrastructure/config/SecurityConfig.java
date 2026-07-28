@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/sys/login", "/sys/register", "/user/register").permitAll()
+                .antMatchers("/sys/login", "/sys/refreshToken", "/sys/register", "/user/register").permitAll()
 //                放行接口
 //                .antMatchers(
 //                        "/category/queryCategory",

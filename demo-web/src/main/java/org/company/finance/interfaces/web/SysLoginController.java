@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.company.finance.application.command.service.UserCommandService;
 import org.company.finance.application.query.service.UserQueryService;
 import org.company.finance.application.vo.UserInfoVO;
+import org.company.finance.application.vo.request.RefreshTokenRequestVO;
 import org.company.finance.application.vo.request.SysLoginRequestVO;
 import org.company.finance.application.vo.response.LoginResponseVO;
 import org.company.finance.common.util.R;
@@ -39,9 +40,20 @@ public class SysLoginController {
         return R.ok(login);
     }
 
+    @PostMapping("/refreshToken")
+    @ApiOperation("刷新 Token")
+    public R<LoginResponseVO> refreshToken(@Validated @RequestBody RefreshTokenRequestVO requestVO) {
+        return R.ok(userCommandService.refreshToken(requestVO.getRefreshToken()));
+    }
+
     @GetMapping("/logout")
     @ApiOperation("退出")
     public R logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof Long) {
+            Long userId = (Long) authentication.getPrincipal();
+            userCommandService.logout(userId);
+        }
         SecurityContextHolder.clearContext();
         return R.ok("退出成功");
     }
