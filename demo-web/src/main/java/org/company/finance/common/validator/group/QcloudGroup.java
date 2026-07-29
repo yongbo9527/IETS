@@ -6,12 +6,12 @@
  * 版权所有，侵权必究！
  */
 
-package org.company.finance.infrastructure.validator.group;
+package org.company.finance.common.validator.group;
 
 /**
- * 阿里云
+ * 腾讯云
  *
  * @author Mark sunlightcs@gmail.com
  */
-public interface AliyunGroup {
+public interface QcloudGroup {
 }

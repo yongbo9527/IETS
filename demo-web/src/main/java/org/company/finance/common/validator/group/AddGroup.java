@@ -6,12 +6,12 @@
  * 版权所有，侵权必究！
  */
 
-package org.company.finance.infrastructure.validator.group;
+package org.company.finance.common.validator.group;
 
 /**
- * 腾讯云
+ * 新增数据 Group
  *
  * @author Mark sunlightcs@gmail.com
  */
-public interface QcloudGroup {
+public interface AddGroup {
 }

@@ -1,4 +1,4 @@
-package org.company.finance.infrastructure.config;
+package org.company.finance.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.company.finance.auth.infrastructure.security.JwtAuthenticationEntryPoint;
@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/sys/login", "/sys/refreshToken", "/sys/register", "/user/register").permitAll()
+                        .requestMatchers("/sys/login", "/sys/refresh-token", "/sys/register", "/user/register").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/webjars/**").permitAll()
                         .requestMatchers("/doc.html", "/js/**", "/css/**", "/fonts/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()

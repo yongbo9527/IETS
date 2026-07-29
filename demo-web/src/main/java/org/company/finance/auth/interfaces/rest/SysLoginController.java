@@ -40,7 +40,7 @@ public class SysLoginController {
         return R.ok(login);
     }
 
-    @PostMapping("/refreshToken")
+    @PostMapping("/refresh-token")
     @Operation(summary = "刷新 Token")
     public R<LoginResponseVO> refreshToken(@Validated @RequestBody RefreshTokenRequestVO requestVO) {
         return R.ok(userCommandService.refreshToken(requestVO.getRefreshToken()));
@@ -58,7 +58,7 @@ public class SysLoginController {
         return R.ok("退出成功");
     }
 
-    @GetMapping("/userInfo")
+    @GetMapping("/user-info")
     @Operation(summary = "获取当前用户信息")
     public R<UserInfoVO> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

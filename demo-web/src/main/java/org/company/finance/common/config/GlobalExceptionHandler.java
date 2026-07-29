@@ -1,4 +1,4 @@
-package org.company.finance.infrastructure.config;
+package org.company.finance.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.company.finance.common.util.ApiErrorCode;

@@ -1,4 +1,4 @@
-package org.company.finance.infrastructure.config;
+package org.company.finance.common.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;

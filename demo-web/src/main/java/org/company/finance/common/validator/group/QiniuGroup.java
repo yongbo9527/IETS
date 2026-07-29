@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package org.company.finance.infrastructure.validator.group;
+package org.company.finance.common.validator.group;
 
 /**
  * 七牛
