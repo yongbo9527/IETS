@@ -11,6 +11,7 @@ import org.company.finance.auth.infrastructure.persistence.mapper.SysUserTokenMa
 import org.company.finance.common.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,6 +65,7 @@ class UserCommandServiceTest {
                 passwordEncoder
         );
         ReflectionTestUtils.setField(userCommandService, "expireMinutes", 120);
+        ReflectionTestUtils.setField(userCommandService, "accessExpireMinutes", 120);
         ReflectionTestUtils.setField(userCommandService, "rememberMeMinutes", 10080);
         ReflectionTestUtils.setField(userCommandService, "refreshExpireDays", 7);
     }
@@ -91,6 +94,38 @@ class UserCommandServiceTest {
         userCommandService.login(requestVO, "127.0.0.1");
 
         verify(sysUserTokenMapper, times(1)).insert(any(SysUserTokenEntity.class));
+    }
+
+    @Test
+    void shouldSetRefreshExpiryFromAccessExpiry() {
+        SysLoginRequestVO requestVO = new SysLoginRequestVO();
+        requestVO.setUsername("ron");
+        requestVO.setPassword("123456");
+
+        SysUserEntity user = new SysUserEntity();
+        user.setId(1L);
+        user.setUsername("ron");
+        user.setPassword("encoded");
+        user.setStatusFlag(1);
+        user.setDelFlag(0);
+        user.setLoginCount(0);
+        user.setFailedLoginCount(0);
+
+        when(queryUserRepository.findByUsername("ron")).thenReturn(user);
+        when(passwordEncoder.matches("123456", "encoded")).thenReturn(true);
+        when(jwtUtil.generateAccessToken(1L, "ron")).thenReturn("access-token");
+        when(jwtUtil.generateRefreshToken(1L, "ron")).thenReturn("refresh-token");
+        when(sysUserTokenMapper.selectById(1L)).thenReturn(null);
+
+        userCommandService.login(requestVO, "127.0.0.1");
+
+        ArgumentCaptor<SysUserTokenEntity> captor = ArgumentCaptor.forClass(SysUserTokenEntity.class);
+        verify(sysUserTokenMapper).insert(captor.capture());
+        SysUserTokenEntity tokenEntity = captor.getValue();
+
+        long dayDelta = ChronoUnit.DAYS.between(tokenEntity.getAccessExpireTime(), tokenEntity.getRefreshExpireTime());
+        assertEquals(7, dayDelta);
+        assertEquals(tokenEntity.getAccessExpireTime().toLocalTime(), tokenEntity.getRefreshExpireTime().toLocalTime());
     }
 
     @Test

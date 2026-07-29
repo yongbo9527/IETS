@@ -54,7 +54,7 @@ class SysLoginControllerTest {
         responseVO.setExpiresIn(7200);
         when(userCommandService.refreshToken("refresh-token")).thenReturn(responseVO);
 
-        mockMvc.perform(post("/sys/refreshToken")
+        mockMvc.perform(post("/sys/refresh-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(OBJECT_MAPPER.writeValueAsString(requestVO)))
                 .andExpect(status().isOk())

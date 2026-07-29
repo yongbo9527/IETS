@@ -244,6 +244,7 @@ public class UserCommandService {
      */
     private void persistUserToken(Long userId, String accessToken, String refreshToken, int accessExpireMinutes) {
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime accessExpireTime = now.plusMinutes(accessExpireMinutes);
         SysUserTokenEntity tokenEntity = sysUserTokenMapper.selectById(userId);
         if (tokenEntity == null) {
             tokenEntity = new SysUserTokenEntity();
@@ -251,9 +252,9 @@ public class UserCommandService {
             tokenEntity.setTokenVersion(1);
         }
         tokenEntity.setAccessToken(accessToken);
-        tokenEntity.setAccessExpireTime(now.plusMinutes(accessExpireMinutes));
+        tokenEntity.setAccessExpireTime(accessExpireTime);
         tokenEntity.setRefreshToken(refreshToken);
-        tokenEntity.setRefreshExpireTime(now.plusDays(refreshExpireDays));
+        tokenEntity.setRefreshExpireTime(accessExpireTime.plusDays(refreshExpireDays));
         tokenEntity.setStatusFlag(1);
         tokenEntity.setUpdateTime(now);
 
