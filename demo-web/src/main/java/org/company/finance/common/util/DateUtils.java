@@ -1,6 +1,7 @@
 package org.company.finance.common.util;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,19 @@ public class DateUtils {
             begin = begin.plusDays(1);
         }
         return dateList;
+    }
+
+    public static List<String> getMonthList(String beginDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        YearMonth begin = YearMonth.parse(beginDate.substring(0, 7), formatter);
+        YearMonth end = YearMonth.parse(endDate.substring(0, 7), formatter);
+        List<String> monthList = new ArrayList<>();
+
+        while (!begin.isAfter(end)) {
+            monthList.add(begin.format(formatter));
+            begin = begin.plusMonths(1);
+        }
+        return monthList;
     }
 
     public static List<String> getMonthDateList(String startDate, String endDate) {

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.company.finance.infrastructure.persistence.mapper.ReportMapper">
+<mapper namespace="org.company.finance.report.infrastructure.persistence.ReportMapper">
 
 
-    <select id="selectExpenseByDate" resultType="org.company.finance.application.vo.response.ReportDataResponse">
+    <select id="selectExpenseByDate" resultType="org.company.finance.report.application.query.model.ReportDataQueryModel">
 	    SELECT
-		    expense_date        `date`,
+	      DATE_FORMAT(expense_date, '%Y-%m')        `date`,
 		    SUM(expense_amount) amount,
 		    expense_type        expenseType
 	    FROM
@@ -16,11 +16,14 @@
 			    AND #{endDate}
 		    AND del_flag = 0
 	    GROUP BY
-		    expense_date,
+	      DATE_FORMAT(expense_date, '%Y-%m'),
 		    expense_type
+	    ORDER BY
+		    `date`,
+		    expenseType;
     </select>
-    <select id="selectPieExpenseByCategoryId"
-            resultType="org.company.finance.application.vo.response.BigCategoryExpenseResponse">
+    <select id="selectBigCategoryExpense"
+            resultType="org.company.finance.report.application.query.model.BigCategoryExpenseQueryModel">
         SELECT
             parent.id AS parent_id,
             parent.category_name AS parent_category,
@@ -43,7 +46,7 @@
         ORDER BY
             parent.id;
     </select>
-    <select id="selectDatasetVO" resultType="org.company.finance.application.vo.report.ReportDatasetVO">
+    <select id="selectDataset" resultType="org.company.finance.report.application.query.model.ReportDatasetQueryModel">
         SELECT
             t_total.parent_id,
             t_total.parent_name,
@@ -75,7 +78,7 @@
             t_total.daily_date ASC
 
     </select>
-    <select id="selectExpenseByMonthDate" resultType="org.company.finance.application.vo.response.ReportDataResponse">
+    <select id="selectExpenseByMonth" resultType="org.company.finance.report.application.query.model.ReportDataQueryModel">
         SELECT
             DATE_FORMAT( expense_date, '%Y-%m' ) `date`,
             SUM( expense_amount ) amount
@@ -91,8 +94,20 @@
         ORDER BY
             DATE_FORMAT( expense_date, '%Y-%m' ) ASC
     </select>
+    <select id="selectIncomeExpenseSummary" resultType="org.company.finance.report.application.query.model.ReportDataQueryModel">
+        SELECT
+            SUM(expense_amount) amount,
+            expense_type expenseType
+        FROM
+            daily_expense_record
+        WHERE
+            expense_date BETWEEN #{startDate} AND #{endDate}
+            AND del_flag = 0
+        GROUP BY
+            expense_type
+    </select>
     <select id="selectBigCategoryExpenseDetail"
-            resultType="org.company.finance.application.vo.response.BigCategoryExpenseResponse">
+            resultType="org.company.finance.report.application.query.model.BigCategoryExpenseQueryModel">
         WITH amount_table AS (
             SELECT
                 parent.id AS parent_id,
@@ -126,7 +141,7 @@
             </if>
     </select>
     <select id="selectExpenseDetailList"
-            resultType="org.company.finance.application.vo.response.ExpenseDetailResponse">
+            resultType="org.company.finance.report.application.query.model.ExpenseDetailQueryModel">
         WITH amount_detail AS (
             SELECT
                 daily.expense_date,

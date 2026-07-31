@@ -9,9 +9,9 @@
 package org.company.finance.common.util;
 
 
-import org.company.finance.infrastructure.validator.group.AliyunGroup;
-import org.company.finance.infrastructure.validator.group.QcloudGroup;
-import org.company.finance.infrastructure.validator.group.QiniuGroup;
+import org.company.finance.common.validator.group.AliyunGroup;
+import org.company.finance.common.validator.group.QcloudGroup;
+import org.company.finance.common.validator.group.QiniuGroup;
 
 import java.util.Optional;
 import java.util.stream.Stream;
