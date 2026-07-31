@@ -23,6 +23,8 @@ public interface QueryReportRepository {
 
     List<ReportDataQueryModel> findExpenseByMonth(ReportRequestVO request);
 
+    List<ReportDataQueryModel> findIncomeExpenseSummary(ReportRequestVO request);
+
     List<ExpenseDetailQueryModel> findExpenseDetailList(ReportRequestVO request);
 
     List<ReportDatasetQueryModel> findDataset(ReportRequestVO request);

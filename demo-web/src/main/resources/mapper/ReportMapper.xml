@@ -6,7 +6,7 @@
 
     <select id="selectExpenseByDate" resultType="org.company.finance.report.application.query.model.ReportDataQueryModel">
 	    SELECT
-		    expense_date        `date`,
+	      DATE_FORMAT(expense_date, '%Y-%m')        `date`,
 		    SUM(expense_amount) amount,
 		    expense_type        expenseType
 	    FROM
@@ -16,8 +16,11 @@
 			    AND #{endDate}
 		    AND del_flag = 0
 	    GROUP BY
-		    expense_date,
+	      DATE_FORMAT(expense_date, '%Y-%m'),
 		    expense_type
+	    ORDER BY
+		    `date`,
+		    expenseType;
     </select>
     <select id="selectBigCategoryExpense"
             resultType="org.company.finance.report.application.query.model.BigCategoryExpenseQueryModel">
@@ -90,6 +93,18 @@
             DATE_FORMAT( expense_date, '%Y-%m' )
         ORDER BY
             DATE_FORMAT( expense_date, '%Y-%m' ) ASC
+    </select>
+    <select id="selectIncomeExpenseSummary" resultType="org.company.finance.report.application.query.model.ReportDataQueryModel">
+        SELECT
+            SUM(expense_amount) amount,
+            expense_type expenseType
+        FROM
+            daily_expense_record
+        WHERE
+            expense_date BETWEEN #{startDate} AND #{endDate}
+            AND del_flag = 0
+        GROUP BY
+            expense_type
     </select>
     <select id="selectBigCategoryExpenseDetail"
             resultType="org.company.finance.report.application.query.model.BigCategoryExpenseQueryModel">

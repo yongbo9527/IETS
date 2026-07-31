@@ -43,6 +43,11 @@ public class QueryReportRepositoryImpl implements QueryReportRepository {
     }
 
     @Override
+    public List<ReportDataQueryModel> findIncomeExpenseSummary(ReportRequestVO request) {
+        return reportMapper.selectIncomeExpenseSummary(request);
+    }
+
+    @Override
     public List<ExpenseDetailQueryModel> findExpenseDetailList(ReportRequestVO request) {
         return reportMapper.selectExpenseDetailList(request);
     }

@@ -16,6 +16,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,7 +64,7 @@ public class GlobalExceptionHandler {
         return R.failed(ApiErrorCode.PARAM_ERROR.getCode(), message);
     }
 
-    @ExceptionHandler(NoHandlerFoundException.class)
+    @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public R<Void> handleNoHandlerFoundException(NoHandlerFoundException e) {
         log.warn("接口不存在: {}", e.getMessage());

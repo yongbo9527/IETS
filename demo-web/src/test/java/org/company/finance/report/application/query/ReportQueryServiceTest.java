@@ -5,6 +5,7 @@ import org.company.finance.report.application.query.model.ReportDataQueryModel;
 import org.company.finance.report.domain.repository.QueryReportRepository;
 import org.company.finance.report.interfaces.rest.response.BigCategoryExpenseResponse;
 import org.company.finance.report.interfaces.rest.response.IncomeExpenseDataVO;
+import org.company.finance.report.interfaces.rest.response.IncomeExpenseSummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -65,6 +66,22 @@ class ReportQueryServiceTest {
         assertEquals(2, result.size());
         assertEquals(new BigDecimal("30.00"), result.get(0).getExpensePercent());
         assertEquals(new BigDecimal("70.00"), result.get(1).getExpensePercent());
+    }
+
+    @Test
+    void shouldSummarizeIncomeExpenseTotals() {
+        when(queryReportRepository.findIncomeExpenseSummary(any())).thenReturn(Arrays.asList(
+                buildReportData("2026-01", "100.00", 2),
+                buildReportData("2026-01", "20.00", 1),
+                buildReportData("2026-02", "50.00", 2),
+                buildReportData("2026-02", "10.00", 1)
+        ));
+
+        IncomeExpenseSummaryResponse result = reportQueryService.getIncomeExpenseSummary(new org.company.finance.report.interfaces.rest.request.ReportRequestVO());
+
+        assertEquals(new BigDecimal("30.00"), result.getTotalExpense());
+        assertEquals(new BigDecimal("150.00"), result.getTotalIncome());
+        assertEquals(new BigDecimal("120.00"), result.getNetIncome());
     }
 
     private ReportDataQueryModel buildReportData(String date, String amount, Integer expenseType) {

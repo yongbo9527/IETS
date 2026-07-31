@@ -44,6 +44,8 @@ public interface ReportMapper {
      */
     List<ReportDataQueryModel> selectExpenseByMonth(ReportRequestVO request);
 
+    List<ReportDataQueryModel> selectIncomeExpenseSummary(ReportRequestVO request);
+
     /**
      * 查询大类支出明细
      * @param vo

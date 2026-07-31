@@ -9,11 +9,7 @@ import org.company.finance.report.application.query.model.ReportDataQueryModel;
 import org.company.finance.report.application.query.model.ReportDatasetQueryModel;
 import org.company.finance.report.domain.repository.QueryReportRepository;
 import org.company.finance.report.interfaces.rest.request.ReportRequestVO;
-import org.company.finance.report.interfaces.rest.response.BigCategoryExpenseResponse;
-import org.company.finance.report.interfaces.rest.response.ExpenseDetailResponse;
-import org.company.finance.report.interfaces.rest.response.IncomeExpenseDataVO;
-import org.company.finance.report.interfaces.rest.response.LineEchartsResponse;
-import org.company.finance.report.interfaces.rest.response.ReportDatasetResponse;
+import org.company.finance.report.interfaces.rest.response.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -78,7 +74,7 @@ public class ReportQueryService {
     }
 
     public LineEchartsResponse getMonthExpense(ReportRequestVO request) {
-        List<String> dateList = DateUtils.getDateList(request.getStartDate(), request.getEndDate());
+        List<String> dateList = DateUtils.getMonthList(request.getStartDate(), request.getEndDate());
         List<ReportDataQueryModel> reportData = queryReportRepository.findExpenseByDate(request);
         LineEchartsResponse response = new LineEchartsResponse();
         response.setXAxisData(dateList);
@@ -236,6 +232,23 @@ public class ReportQueryService {
         response.setChildCategory(model.getChildCategory());
         response.setExpenseTotal(model.getExpenseTotal());
         response.setRemark(model.getRemark());
+        return response;
+    }
+
+    public IncomeExpenseSummaryResponse getIncomeExpenseSummary(ReportRequestVO request) {
+        List<ReportDataQueryModel> reportData = queryReportRepository.findIncomeExpenseSummary(request);
+        BigDecimal totalExpense = reportData.stream()
+                .filter(item -> item.getExpenseType() == 1)
+                .map(ReportDataQueryModel::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalIncome = reportData.stream()
+                .filter(item -> item.getExpenseType() == 2)
+                .map(ReportDataQueryModel::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        IncomeExpenseSummaryResponse response = new IncomeExpenseSummaryResponse();
+        response.setTotalExpense(totalExpense);
+        response.setTotalIncome(totalIncome);
+        response.setNetIncome(totalIncome.subtract(totalExpense));
         return response;
     }
 }

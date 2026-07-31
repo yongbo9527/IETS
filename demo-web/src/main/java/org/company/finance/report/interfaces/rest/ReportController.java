@@ -6,11 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.company.finance.common.util.R;
 import org.company.finance.report.application.query.ReportQueryService;
 import org.company.finance.report.interfaces.rest.request.ReportRequestVO;
-import org.company.finance.report.interfaces.rest.response.BigCategoryExpenseResponse;
-import org.company.finance.report.interfaces.rest.response.ExpenseDetailResponse;
-import org.company.finance.report.interfaces.rest.response.IncomeExpenseDataVO;
-import org.company.finance.report.interfaces.rest.response.LineEchartsResponse;
-import org.company.finance.report.interfaces.rest.response.ReportDatasetResponse;
+import org.company.finance.report.interfaces.rest.response.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,5 +76,12 @@ public class ReportController {
     public R<LineEchartsResponse> getMonthExpenseBar(@Validated @RequestBody ReportRequestVO request) {
         LineEchartsResponse lineEchartsResponse = reportQueryService.getMonthExpenseBar(request);
         return R.ok(lineEchartsResponse);
+    }
+
+    @Operation(summary = "收支汇总统计")
+    @PostMapping("/income-expense-summary")
+    public R<IncomeExpenseSummaryResponse> getIncomeExpenseSummary(@Validated @RequestBody ReportRequestVO request) {
+        IncomeExpenseSummaryResponse summary = reportQueryService.getIncomeExpenseSummary(request);
+        return R.ok(summary);
     }
 }
